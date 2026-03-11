@@ -24,7 +24,17 @@ final class WorkExperience: Codable {
         endDate == nil
     }
 
-    init(id: String, companyName: String, jobTitle: String, startDate: Date, endDate: Date?, hoursPerWeek: Int, jobDescription: String, technologiesUsed: [String], orderIndex: Int) {
+    init(
+        id: String,
+        companyName: String,
+        jobTitle: String,
+        startDate: Date,
+        endDate: Date?,
+        hoursPerWeek: Int,
+        jobDescription: String,
+        technologiesUsed: [String],
+        orderIndex: Int
+    ) {
         self.id = id
         self.companyName = companyName
         self.jobTitle = jobTitle

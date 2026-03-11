@@ -37,9 +37,13 @@ final class FirestoreDataPopulator {
         }
     }
 
-    // MARK: - Personal Info
+}
 
-    private func populatePersonalInfo() async throws {
+// MARK: - Private Population Methods
+
+private extension FirestoreDataPopulator {
+
+    func populatePersonalInfo() async throws {
         print("📝 Populating Personal Info...")
 
         let personalInfo: [String: Any] = [
@@ -119,7 +123,8 @@ final class FirestoreDataPopulator {
         ]
 
         for experience in experiences {
-            try await database.collection("workExperience").document(experience["id"] as! String).setData(experience)
+            guard let documentId = experience["id"] as? String else { continue }
+            try await database.collection("workExperience").document(documentId).setData(experience)
         }
 
         print("✅ Work Experience added (\(experiences.count) positions)")
@@ -156,7 +161,8 @@ final class FirestoreDataPopulator {
         ]
 
         for education in educationEntries {
-            try await database.collection("education").document(education["id"] as! String).setData(education)
+            guard let documentId = education["id"] as? String else { continue }
+            try await database.collection("education").document(documentId).setData(education)
         }
 
         print("✅ Education added (\(educationEntries.count) degrees)")
@@ -199,7 +205,8 @@ final class FirestoreDataPopulator {
         ]
 
         for skill in skills {
-            try await database.collection("skills").document(skill["id"] as! String).setData(skill)
+            guard let documentId = skill["id"] as? String else { continue }
+            try await database.collection("skills").document(documentId).setData(skill)
         }
 
         print("✅ Skills added (\(skills.count) skills)")
@@ -232,7 +239,8 @@ final class FirestoreDataPopulator {
         ]
 
         for language in languages {
-            try await database.collection("languages").document(language["id"] as! String).setData(language)
+            guard let documentId = language["id"] as? String else { continue }
+            try await database.collection("languages").document(documentId).setData(language)
         }
 
         print("✅ Languages added (\(languages.count) languages)")
@@ -283,7 +291,8 @@ final class FirestoreDataPopulator {
         ]
 
         for competency in competencies {
-            try await database.collection("competencies").document(competency["id"] as! String).setData(competency)
+            guard let documentId = competency["id"] as? String else { continue }
+            try await database.collection("competencies").document(documentId).setData(competency)
         }
 
         print("✅ Competencies added (\(competencies.count) competencies)")
@@ -340,7 +349,8 @@ final class FirestoreDataPopulator {
         ]
 
         for interest in interests {
-            try await database.collection("interests").document(interest["id"] as! String).setData(interest)
+            guard let documentId = interest["id"] as? String else { continue }
+            try await database.collection("interests").document(documentId).setData(interest)
         }
 
         print("✅ Interests added (\(interests.count) interests)")
@@ -407,7 +417,8 @@ final class FirestoreDataPopulator {
         ]
 
         for project in projects {
-            try await database.collection("projects").document(project["id"] as! String).setData(project)
+            guard let documentId = project["id"] as? String else { continue }
+            try await database.collection("projects").document(documentId).setData(project)
         }
 
         print("✅ Projects added (\(projects.count) projects)")

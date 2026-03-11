@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseFirestore
 
-final class FirebaseService {
+final class FirebaseService: FirebaseServiceProtocol {
 
     private let database = Firestore.firestore()
 
@@ -128,21 +128,5 @@ final class FirebaseService {
 
         let data = try document.data(as: SocialLinks.self)
         return data
-    }
-}
-
-// MARK: - Error Types
-
-enum FirebaseServiceError: Error, LocalizedError {
-    case noDataFound
-    case decodingError
-
-    var errorDescription: String? {
-        switch self {
-        case .noDataFound:
-            return "No data found in Firestore"
-        case .decodingError:
-            return "Failed to decode Firestore data"
-        }
     }
 }

@@ -26,7 +26,19 @@ final class Project: Codable {
         endDate == nil
     }
 
-    init(id: String, title: String, startDate: Date, endDate: Date?, projectDescription: String, techStack: [String], githubURL: String?, screenshotURLs: [String], demoVideoURL: String?, isFeatured: Bool, orderIndex: Int) {
+    init(
+        id: String,
+        title: String,
+        startDate: Date,
+        endDate: Date?,
+        projectDescription: String,
+        techStack: [String],
+        githubURL: String?,
+        screenshotURLs: [String],
+        demoVideoURL: String?,
+        isFeatured: Bool,
+        orderIndex: Int
+    ) {
         self.id = id
         self.title = title
         self.startDate = startDate

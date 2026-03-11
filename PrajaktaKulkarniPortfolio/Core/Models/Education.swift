@@ -20,7 +20,17 @@ final class Education: Codable {
     var hasDiploma: Bool
     var orderIndex: Int
 
-    init(id: String, degreeName: String, fieldOfStudy: String, institutionName: String, startDate: Date, endDate: Date, subjectsStudied: String, hasDiploma: Bool, orderIndex: Int) {
+    init(
+        id: String,
+        degreeName: String,
+        fieldOfStudy: String,
+        institutionName: String,
+        startDate: Date,
+        endDate: Date,
+        subjectsStudied: String,
+        hasDiploma: Bool,
+        orderIndex: Int
+    ) {
         self.id = id
         self.degreeName = degreeName
         self.fieldOfStudy = fieldOfStudy

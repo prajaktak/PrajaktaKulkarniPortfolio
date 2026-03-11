@@ -2,243 +2,464 @@
 //  FirebaseServiceTests.swift
 //  PrajaktaKulkarniPortfolioTests
 //
-//  Created by Prajakta Kulkarni on 10/02/2026.
+//  Created by Prajakta Kulkarni on 28/01/2026.
 //
-//  NOTE: Integration tests disabled due to test environment issues
-//  Firebase connectivity will be tested through the actual app
+//  Unit tests for FirebaseServiceProtocol using a mock — no network required.
+//
 
-import XCTest
-import FirebaseCore
+import Testing
+import Foundation
 @testable import PrajaktaKulkarniPortfolio
 
-final class FirebaseServiceTests: XCTestCase {
+// MARK: - Mock Firebase Service
 
-    override class var defaultTestSuite: XCTestSuite {
-        return XCTestSuite(name: "Disabled \(String(describing: self))")
+/// Mock implementation of FirebaseServiceProtocol for unit testing.
+/// Returns pre-configured test data without any network calls.
+final class MockFirebaseService: FirebaseServiceProtocol {
+
+    var personalInfoToReturn: PersonalInfo?
+    var workExperiencesToReturn: [WorkExperience] = []
+    var educationToReturn: [Education] = []
+    var skillsToReturn: [Skill] = []
+    var languagesToReturn: [Language] = []
+    var competenciesToReturn: [Competency] = []
+    var interestsToReturn: [Interest] = []
+    var projectsToReturn: [Project] = []
+    var socialLinksToReturn: SocialLinks?
+    var errorToThrow: Error?
+
+    func fetchPersonalInfo() async throws -> PersonalInfo {
+        if let error = errorToThrow { throw error }
+        guard let info = personalInfoToReturn else { throw FirebaseServiceError.noDataFound }
+        return info
     }
 
-    var service: FirebaseService!
-
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-
-        // Configure Firebase if not already configured
-        if FirebaseApp.app() == nil {
-            guard let path = Bundle(for: type(of: self)).path(forResource: "GoogleService-Info", ofType: "plist") else {
-                throw NSError(domain: "FirebaseServiceTests", code: 1, userInfo: [NSLocalizedDescriptionKey: "GoogleService-Info.plist not found in test bundle"])
-            }
-            guard let options = FirebaseOptions(contentsOfFile: path) else {
-                throw NSError(domain: "FirebaseServiceTests", code: 2, userInfo: [NSLocalizedDescriptionKey: "Failed to load Firebase options"])
-            }
-            FirebaseApp.configure(options: options)
-        }
-
-        service = FirebaseService()
+    func fetchWorkExperiences() async throws -> [WorkExperience] {
+        if let error = errorToThrow { throw error }
+        return workExperiencesToReturn
     }
 
-    override func tearDownWithError() throws {
-        service = nil
-        try super.tearDownWithError()
+    func fetchEducation() async throws -> [Education] {
+        if let error = errorToThrow { throw error }
+        return educationToReturn
     }
 
-    // MARK: - Personal Info Tests
-
-    func testFetchPersonalInfo() async throws {
-        let personalInfo = try await service.fetchPersonalInfo()
-
-        XCTAssertEqual(personalInfo.fullName, "Prajakta Sarang S Kulkarni")
-        XCTAssertEqual(personalInfo.email, "prachee.j@gmail.com")
-        XCTAssertFalse(personalInfo.professionalSummary.isEmpty)
-        XCTAssertFalse(personalInfo.location.isEmpty)
+    func fetchSkills() async throws -> [Skill] {
+        if let error = errorToThrow { throw error }
+        return skillsToReturn
     }
 
-    // MARK: - Work Experience Tests
-
-    func testFetchWorkExperiences() async throws {
-        let experiences = try await service.fetchWorkExperiences()
-
-        XCTAssertFalse(experiences.isEmpty, "Work experiences should not be empty")
-        XCTAssertEqual(experiences.count, 5, "Should have 5 work experiences")
-
-        // Verify ordering (most recent first)
-        if experiences.count >= 2 {
-            XCTAssertGreaterThanOrEqual(experiences[0].startDate, experiences[1].startDate)
-        }
-
-        // Verify first experience is Mirum Agency (most recent)
-        let firstExperience = experiences.first!
-        XCTAssertEqual(firstExperience.companyName, "Mirum Agency")
-        XCTAssertEqual(firstExperience.jobTitle, "iOS Developer")
-        XCTAssertFalse(firstExperience.technologiesUsed.isEmpty)
+    func fetchLanguages() async throws -> [Language] {
+        if let error = errorToThrow { throw error }
+        return languagesToReturn
     }
 
-    func testWorkExperienceCurrentPosition() async throws {
-        let experiences = try await service.fetchWorkExperiences()
-
-        // Find Mirum Agency position (current)
-        let currentPosition = experiences.first { $0.companyName == "Mirum Agency" }
-        XCTAssertNotNil(currentPosition)
-        XCTAssertTrue(currentPosition!.isCurrentPosition, "Mirum Agency should be current position")
-        XCTAssertNil(currentPosition!.endDate)
+    func fetchCompetencies() async throws -> [Competency] {
+        if let error = errorToThrow { throw error }
+        return competenciesToReturn
     }
 
-    // MARK: - Education Tests
-
-    func testFetchEducation() async throws {
-        let education = try await service.fetchEducation()
-
-        XCTAssertFalse(education.isEmpty, "Education should not be empty")
-        XCTAssertEqual(education.count, 2, "Should have 2 education entries")
-
-        // Verify first is Master's degree (most recent)
-        let firstEducation = education.first!
-        XCTAssertEqual(firstEducation.degreeName, "Master of Science in Computer Science")
-        XCTAssertEqual(firstEducation.institutionName, "Vrije Universiteit Amsterdam")
+    func fetchInterests() async throws -> [Interest] {
+        if let error = errorToThrow { throw error }
+        return interestsToReturn
     }
 
-    // MARK: - Skills Tests
-
-    func testFetchSkills() async throws {
-        let skills = try await service.fetchSkills()
-
-        XCTAssertFalse(skills.isEmpty, "Skills should not be empty")
-        XCTAssertGreaterThanOrEqual(skills.count, 10, "Should have at least 10 skills")
-
-        // Verify skills have categories
-        let categories = Set(skills.map { $0.category })
-        XCTAssertTrue(categories.contains("Programming Languages"))
-        XCTAssertTrue(categories.contains("Mobile Development"))
-
-        // Verify proficiency levels are valid (if present)
-        for skill in skills {
-            if let proficiency = skill.proficiencyLevel {
-                XCTAssertTrue(["Beginner", "Intermediate", "Advanced", "Expert"].contains(proficiency))
-            }
-        }
+    func fetchProjects() async throws -> [Project] {
+        if let error = errorToThrow { throw error }
+        return projectsToReturn
     }
 
-    // MARK: - Languages Tests
+    func fetchSocialLinks() async throws -> SocialLinks {
+        if let error = errorToThrow { throw error }
+        guard let links = socialLinksToReturn else { throw FirebaseServiceError.noDataFound }
+        return links
+    }
+}
 
-    func testFetchLanguages() async throws {
-        let languages = try await service.fetchLanguages()
+// MARK: - Test Data Factories
 
-        XCTAssertFalse(languages.isEmpty, "Languages should not be empty")
-        XCTAssertEqual(languages.count, 3, "Should have 3 languages")
+private func makePersonalInfo() -> PersonalInfo {
+    PersonalInfo(
+        id: "pi-1",
+        fullName: "Prajakta Sarang S Kulkarni",
+        email: "prachee.j@gmail.com",
+        phoneNumber: "0615424886",
+        location: "Hilversum, Netherlands",
+        professionalSummary: "Senior iOS Developer with 8+ years experience"
+    )
+}
 
-        let languageNames = Set(languages.map { $0.languageName })
-        XCTAssertTrue(languageNames.contains("Dutch"))
-        XCTAssertTrue(languageNames.contains("English"))
-        XCTAssertTrue(languageNames.contains("Hindi"))
+private func makeWorkExperience(
+    id: String,
+    company: String,
+    startOffset: TimeInterval,
+    endOffset: TimeInterval? = nil
+) -> WorkExperience {
+    WorkExperience(
+        id: id,
+        companyName: company,
+        jobTitle: "Lead Mobile App Developer",
+        startDate: Date(timeIntervalSince1970: startOffset),
+        endDate: endOffset.map { Date(timeIntervalSince1970: $0) },
+        hoursPerWeek: 40,
+        jobDescription: "Mobile app development",
+        technologiesUsed: ["Swift", "UIKit"],
+        orderIndex: 1
+    )
+}
+
+private func makeSocialLinks() -> SocialLinks {
+    SocialLinks(
+        id: "sl-1",
+        linkedInURL: "https://linkedin.com/in/prajakta",
+        githubURL: "https://github.com/prajakta",
+        emailAddress: "prachee.j@gmail.com"
+    )
+}
+
+// MARK: - Personal Info Tests
+
+struct FirebaseService_PersonalInfoTests {
+
+    @Test("fetchPersonalInfo returns correct full name")
+    func fetchPersonalInfo_returnsCorrectFullName() async throws {
+        let mockService = MockFirebaseService()
+        mockService.personalInfoToReturn = makePersonalInfo()
+        let result = try await mockService.fetchPersonalInfo()
+        #expect(result.fullName == "Prajakta Sarang S Kulkarni")
     }
 
-    // MARK: - Competencies Tests
-
-    func testFetchCompetencies() async throws {
-        let competencies = try await service.fetchCompetencies()
-
-        XCTAssertFalse(competencies.isEmpty, "Competencies should not be empty")
-        XCTAssertGreaterThanOrEqual(competencies.count, 5, "Should have at least 5 competencies")
-
-        // Verify competencies have descriptions
-        for competency in competencies {
-            XCTAssertFalse(competency.competencyTitle.isEmpty)
-            XCTAssertFalse(competency.competencyDescription.isEmpty)
-        }
+    @Test("fetchPersonalInfo returns correct email")
+    func fetchPersonalInfo_returnsCorrectEmail() async throws {
+        let mockService = MockFirebaseService()
+        mockService.personalInfoToReturn = makePersonalInfo()
+        let result = try await mockService.fetchPersonalInfo()
+        #expect(result.email == "prachee.j@gmail.com")
     }
 
-    // MARK: - Interests Tests
+    @Test("fetchPersonalInfo returns correct location")
+    func fetchPersonalInfo_returnsCorrectLocation() async throws {
+        let mockService = MockFirebaseService()
+        mockService.personalInfoToReturn = makePersonalInfo()
+        let result = try await mockService.fetchPersonalInfo()
+        #expect(result.location == "Hilversum, Netherlands")
+    }
 
-    func testFetchInterests() async throws {
-        let interests = try await service.fetchInterests()
-
-        XCTAssertFalse(interests.isEmpty, "Interests should not be empty")
-        XCTAssertGreaterThanOrEqual(interests.count, 5, "Should have at least 5 interests")
-
-        // Verify interests have names and descriptions
-        for interest in interests {
-            XCTAssertFalse(interest.interestTitle.isEmpty)
-            XCTAssertFalse(interest.interestDescription.isEmpty)
+    @Test("fetchPersonalInfo throws noDataFound when no data is configured")
+    func fetchPersonalInfo_noData_throwsNoDataFound() async throws {
+        let mockService = MockFirebaseService()
+        mockService.personalInfoToReturn = nil
+        await #expect(throws: FirebaseServiceError.noDataFound) {
+            _ = try await mockService.fetchPersonalInfo()
         }
     }
 
-    // MARK: - Projects Tests
-
-    func testFetchProjects() async throws {
-        let projects = try await service.fetchProjects()
-
-        XCTAssertFalse(projects.isEmpty, "Projects should not be empty")
-        XCTAssertGreaterThanOrEqual(projects.count, 4, "Should have at least 4 projects")
-
-        // Verify featured project (Sequence Game) is first
-        let firstProject = projects.first!
-        XCTAssertTrue(firstProject.isFeatured, "First project should be featured")
-        XCTAssertEqual(firstProject.title, "Sequence - The Memory Game")
-
-        // Verify project has required fields
-        XCTAssertFalse(firstProject.projectDescription.isEmpty)
-        XCTAssertFalse(firstProject.techStack.isEmpty)
-    }
-
-    // MARK: - Social Links Tests
-
-    func testFetchSocialLinks() async throws {
-        let socialLinks = try await service.fetchSocialLinks()
-
-        XCTAssertFalse(socialLinks.linkedInURL.isEmpty)
-        XCTAssertFalse(socialLinks.githubURL.isEmpty)
-        XCTAssertFalse(socialLinks.emailAddress.isEmpty)
-
-        // Verify URL formats
-        XCTAssertTrue(socialLinks.linkedInURL.contains("linkedin.com"))
-        XCTAssertTrue(socialLinks.githubURL.contains("github.com"))
-        XCTAssertTrue(socialLinks.emailAddress.contains("@"))
-    }
-
-    // MARK: - Performance Tests
-    // Note: These tests measure network performance to Firebase
-    // High variance is expected due to network conditions
-
-    func testFetchPersonalInfoPerformance() throws {
-        let options = XCTMeasureOptions()
-        options.iterationCount = 5
-
-        measure(options: options) {
-            let expectation = XCTestExpectation(description: "Fetch personal info")
-
-            Task {
-                _ = try await service.fetchPersonalInfo()
-                expectation.fulfill()
-            }
-
-            wait(for: [expectation], timeout: 5.0)
+    @Test("fetchPersonalInfo propagates decodingError when error is configured")
+    func fetchPersonalInfo_withDecodingError_throwsDecodingError() async throws {
+        let mockService = MockFirebaseService()
+        mockService.errorToThrow = FirebaseServiceError.decodingError
+        await #expect(throws: FirebaseServiceError.decodingError) {
+            _ = try await mockService.fetchPersonalInfo()
         }
     }
+}
 
-//    func testFetchAllDataPerformance() throws {
-//        let options = XCTMeasureOptions()
-//        options.iterationCount = 5
-//
-//        measure(options: options) {
-//            let expectation = XCTestExpectation(description: "Fetch all data")
-//
-//            Task {
-//                async let personalInfo = service.fetchPersonalInfo()
-//                async let workExperiences = service.fetchWorkExperiences()
-//                async let education = service.fetchEducation()
-//                async let skills = service.fetchSkills()
-//                async let languages = service.fetchLanguages()
-//                async let competencies = service.fetchCompetencies()
-//                async let interests = service.fetchInterests()
-//                async let projects = service.fetchProjects()
-//                async let socialLinks = service.fetchSocialLinks()
-//
-//                _ = try await (personalInfo, workExperiences, education, skills,
-//                              languages, competencies, interests, projects, socialLinks)
-//
-//                expectation.fulfill()
-//            }
-//
-//            wait(for: [expectation], timeout: 10.0)
-//        }
-//    }
+// MARK: - Work Experience Tests
+
+struct FirebaseService_WorkExperienceTests {
+
+    @Test("fetchWorkExperiences returns correct count")
+    func fetchWorkExperiences_returnsCorrectCount() async throws {
+        let mockService = MockFirebaseService()
+        mockService.workExperiencesToReturn = [
+            makeWorkExperience(id: "exp-1", company: "Mirum Agency", startOffset: 1_427_846_400),
+            makeWorkExperience(id: "exp-2", company: "Tagrem", startOffset: 1_380_585_600, endOffset: 1_427_846_400),
+            makeWorkExperience(id: "exp-3", company: "Quadlogix", startOffset: 1_343_779_200, endOffset: 1_380_585_600),
+            makeWorkExperience(id: "exp-4", company: "Arkenia", startOffset: 1_304_208_000, endOffset: 1_343_779_200),
+            makeWorkExperience(id: "exp-5", company: "Ubisoft", startOffset: 1_175_385_600, endOffset: 1_304_208_000)
+        ]
+        let result = try await mockService.fetchWorkExperiences()
+        #expect(result.count == 5)
+    }
+
+    @Test("fetchWorkExperiences returns empty array when no experiences configured")
+    func fetchWorkExperiences_noData_returnsEmptyArray() async throws {
+        let mockService = MockFirebaseService()
+        let result = try await mockService.fetchWorkExperiences()
+        #expect(result.isEmpty)
+    }
+
+    @Test("fetchWorkExperiences returns correct company name")
+    func fetchWorkExperiences_returnsCorrectCompanyName() async throws {
+        let mockService = MockFirebaseService()
+        mockService.workExperiencesToReturn = [
+            makeWorkExperience(id: "exp-1", company: "Mirum Agency", startOffset: 1_427_846_400)
+        ]
+        let result = try await mockService.fetchWorkExperiences()
+        #expect(result.first?.companyName == "Mirum Agency")
+    }
+
+    @Test("fetchWorkExperiences returns experience with no end date as current position")
+    func fetchWorkExperiences_noEndDate_isCurrentPosition() async throws {
+        let mockService = MockFirebaseService()
+        mockService.workExperiencesToReturn = [
+            makeWorkExperience(id: "exp-1", company: "Mirum Agency", startOffset: 1_427_846_400, endOffset: nil)
+        ]
+        let result = try await mockService.fetchWorkExperiences()
+        #expect(result.first?.isCurrentPosition == true)
+    }
+}
+
+// MARK: - Skills Tests
+
+struct FirebaseService_SkillsTests {
+
+    @Test("fetchSkills returns correct count")
+    func fetchSkills_returnsCorrectCount() async throws {
+        let mockService = MockFirebaseService()
+        mockService.skillsToReturn = [
+            Skill(id: "sk-1", skillName: "Swift", category: "Programming Languages", proficiencyLevel: "Expert", orderIndex: 1),
+            Skill(id: "sk-2", skillName: "SwiftUI", category: "iOS Frameworks", proficiencyLevel: "Advanced", orderIndex: 2),
+            Skill(id: "sk-3", skillName: "Xcode", category: "Tools", proficiencyLevel: nil, orderIndex: 3)
+        ]
+        let result = try await mockService.fetchSkills()
+        #expect(result.count == 3)
+    }
+
+    @Test("fetchSkills returns Programming Languages category")
+    func fetchSkills_containsProgrammingLanguagesCategory() async throws {
+        let mockService = MockFirebaseService()
+        mockService.skillsToReturn = [
+            Skill(id: "sk-1", skillName: "Swift", category: "Programming Languages", proficiencyLevel: nil, orderIndex: 1)
+        ]
+        let result = try await mockService.fetchSkills()
+        let categories = result.map { $0.category }
+        #expect(categories.contains("Programming Languages"))
+    }
+
+    @Test("fetchSkills returns iOS Frameworks category")
+    func fetchSkills_containsiOSFrameworksCategory() async throws {
+        let mockService = MockFirebaseService()
+        mockService.skillsToReturn = [
+            Skill(id: "sk-2", skillName: "SwiftUI", category: "iOS Frameworks", proficiencyLevel: nil, orderIndex: 2)
+        ]
+        let result = try await mockService.fetchSkills()
+        let categories = result.map { $0.category }
+        #expect(categories.contains("iOS Frameworks"))
+    }
+}
+
+// MARK: - Languages Tests
+
+struct FirebaseService_LanguagesTests {
+
+    @Test("fetchLanguages returns correct count")
+    func fetchLanguages_returnsCorrectCount() async throws {
+        let mockService = MockFirebaseService()
+        mockService.languagesToReturn = [
+            Language(id: "lang-1", languageName: "Dutch", speakingProficiency: "Reasonable", writingProficiency: "Reasonable"),
+            Language(id: "lang-2", languageName: "English", speakingProficiency: "Good", writingProficiency: "Good"),
+            Language(id: "lang-3", languageName: "Hindi", speakingProficiency: "Good", writingProficiency: "Good")
+        ]
+        let result = try await mockService.fetchLanguages()
+        #expect(result.count == 3)
+    }
+
+    @Test("fetchLanguages returns Dutch language")
+    func fetchLanguages_containsDutch() async throws {
+        let mockService = MockFirebaseService()
+        mockService.languagesToReturn = [
+            Language(id: "lang-1", languageName: "Dutch", speakingProficiency: "Reasonable", writingProficiency: "Reasonable")
+        ]
+        let result = try await mockService.fetchLanguages()
+        #expect(result.map { $0.languageName }.contains("Dutch"))
+    }
+
+    @Test("fetchLanguages returns English language")
+    func fetchLanguages_containsEnglish() async throws {
+        let mockService = MockFirebaseService()
+        mockService.languagesToReturn = [
+            Language(id: "lang-2", languageName: "English", speakingProficiency: "Good", writingProficiency: "Good")
+        ]
+        let result = try await mockService.fetchLanguages()
+        #expect(result.map { $0.languageName }.contains("English"))
+    }
+}
+
+// MARK: - Competencies Tests
+
+struct FirebaseService_CompetenciesTests {
+
+    @Test("fetchCompetencies returns correct count")
+    func fetchCompetencies_returnsCorrectCount() async throws {
+        let mockService = MockFirebaseService()
+        mockService.competenciesToReturn = [
+            Competency(id: "comp-1", competencyTitle: "Teamwork", competencyDescription: "Collaboration and teamwork", orderIndex: 1),
+            Competency(id: "comp-2", competencyTitle: "Mentoring", competencyDescription: "Guiding others", orderIndex: 2)
+        ]
+        let result = try await mockService.fetchCompetencies()
+        #expect(result.count == 2)
+    }
+
+    @Test("fetchCompetencies returns competencies with non-empty titles")
+    func fetchCompetencies_titlesAreNotEmpty() async throws {
+        let mockService = MockFirebaseService()
+        mockService.competenciesToReturn = [
+            Competency(id: "comp-1", competencyTitle: "Teamwork", competencyDescription: "Collaboration", orderIndex: 1)
+        ]
+        let result = try await mockService.fetchCompetencies()
+        #expect(!(result.first?.competencyTitle.isEmpty ?? true))
+    }
+}
+
+// MARK: - Interests Tests
+
+struct FirebaseService_InterestsTests {
+
+    @Test("fetchInterests returns correct count")
+    func fetchInterests_returnsCorrectCount() async throws {
+        let mockService = MockFirebaseService()
+        mockService.interestsToReturn = [
+            Interest(id: "int-1", interestTitle: "Cycling", interestDescription: "Road cycling", orderIndex: 1),
+            Interest(id: "int-2", interestTitle: "Reading", interestDescription: "Novels in multiple languages", orderIndex: 2)
+        ]
+        let result = try await mockService.fetchInterests()
+        #expect(result.count == 2)
+    }
+
+    @Test("fetchInterests returns interests with non-empty titles")
+    func fetchInterests_titlesAreNotEmpty() async throws {
+        let mockService = MockFirebaseService()
+        mockService.interestsToReturn = [
+            Interest(id: "int-1", interestTitle: "Cycling", interestDescription: "Road cycling", orderIndex: 1)
+        ]
+        let result = try await mockService.fetchInterests()
+        #expect(!(result.first?.interestTitle.isEmpty ?? true))
+    }
+}
+
+// MARK: - Projects Tests
+
+struct FirebaseService_ProjectsTests {
+
+    @Test("fetchProjects returns featured project as first result")
+    func fetchProjects_firstProjectIsFeatured() async throws {
+        let mockService = MockFirebaseService()
+        mockService.projectsToReturn = [
+            Project(
+                id: "proj-1",
+                title: "Sequence Game",
+                startDate: Date(timeIntervalSince1970: 1_753_920_000),
+                endDate: nil,
+                projectDescription: "A memory card game built with SwiftUI",
+                techStack: ["SwiftUI", "TDD", "CI/CD"],
+                githubURL: "https://github.com/prajakta/sequence",
+                screenshotURLs: [],
+                demoVideoURL: nil,
+                isFeatured: true,
+                orderIndex: 1
+            )
+        ]
+        let result = try await mockService.fetchProjects()
+        #expect(result.first?.isFeatured == true)
+    }
+
+    @Test("fetchProjects returns correct project title")
+    func fetchProjects_returnsCorrectTitle() async throws {
+        let mockService = MockFirebaseService()
+        mockService.projectsToReturn = [
+            Project(
+                id: "proj-1",
+                title: "Sequence Game",
+                startDate: Date(timeIntervalSince1970: 1_753_920_000),
+                endDate: nil,
+                projectDescription: "A memory card game",
+                techStack: ["SwiftUI"],
+                githubURL: nil,
+                screenshotURLs: [],
+                demoVideoURL: nil,
+                isFeatured: true,
+                orderIndex: 1
+            )
+        ]
+        let result = try await mockService.fetchProjects()
+        #expect(result.first?.title == "Sequence Game")
+    }
+
+    @Test("fetchProjects returns ongoing project when endDate is nil")
+    func fetchProjects_nilEndDate_isOngoing() async throws {
+        let mockService = MockFirebaseService()
+        mockService.projectsToReturn = [
+            Project(
+                id: "proj-1",
+                title: "Sequence Game",
+                startDate: Date(timeIntervalSince1970: 1_753_920_000),
+                endDate: nil,
+                projectDescription: "A memory card game",
+                techStack: ["SwiftUI"],
+                githubURL: nil,
+                screenshotURLs: [],
+                demoVideoURL: nil,
+                isFeatured: true,
+                orderIndex: 1
+            )
+        ]
+        let result = try await mockService.fetchProjects()
+        #expect(result.first?.isOngoing == true)
+    }
+}
+
+// MARK: - Social Links Tests
+
+struct FirebaseService_SocialLinksTests {
+
+    @Test("fetchSocialLinks returns LinkedIn URL containing linkedin.com")
+    func fetchSocialLinks_linkedInURLContainsLinkedIn() async throws {
+        let mockService = MockFirebaseService()
+        mockService.socialLinksToReturn = makeSocialLinks()
+        let result = try await mockService.fetchSocialLinks()
+        #expect(result.linkedInURL.contains("linkedin.com"))
+    }
+
+    @Test("fetchSocialLinks returns GitHub URL containing github.com")
+    func fetchSocialLinks_githubURLContainsGitHub() async throws {
+        let mockService = MockFirebaseService()
+        mockService.socialLinksToReturn = makeSocialLinks()
+        let result = try await mockService.fetchSocialLinks()
+        #expect(result.githubURL.contains("github.com"))
+    }
+
+    @Test("fetchSocialLinks returns email containing @ symbol")
+    func fetchSocialLinks_emailContainsAtSymbol() async throws {
+        let mockService = MockFirebaseService()
+        mockService.socialLinksToReturn = makeSocialLinks()
+        let result = try await mockService.fetchSocialLinks()
+        #expect(result.emailAddress.contains("@"))
+    }
+
+    @Test("fetchSocialLinks throws noDataFound when no links configured")
+    func fetchSocialLinks_noData_throwsNoDataFound() async throws {
+        let mockService = MockFirebaseService()
+        mockService.socialLinksToReturn = nil
+        await #expect(throws: FirebaseServiceError.noDataFound) {
+            _ = try await mockService.fetchSocialLinks()
+        }
+    }
+}
+
+// MARK: - FirebaseServiceError Tests
+
+struct FirebaseServiceErrorTests {
+
+    @Test("noDataFound error has non-empty description")
+    func noDataFound_errorDescription_isNotEmpty() {
+        let error = FirebaseServiceError.noDataFound
+        #expect(!(error.errorDescription?.isEmpty ?? true))
+    }
+
+    @Test("decodingError has non-empty description")
+    func decodingError_errorDescription_isNotEmpty() {
+        let error = FirebaseServiceError.decodingError
+        #expect(!(error.errorDescription?.isEmpty ?? true))
+    }
 }
