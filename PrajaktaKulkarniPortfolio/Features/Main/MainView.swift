@@ -37,7 +37,7 @@ struct MainView: View {
         TabView(selection: $viewModel.selectedSectionIndex) {
             ForEach(Array(viewModel.sections.enumerated()), id: \.offset) { sectionIndex, section in
                 CardView(section: section) {
-                    placeholderContent(for: section)
+                    contentView(for: section)
                 }
                 .tag(sectionIndex)
                 .accessibilityLabel("\(section.title) card, \(sectionIndex + 1) of \(viewModel.sections.count)")
@@ -108,11 +108,27 @@ struct MainView: View {
         .accessibilityLabel("Page \(viewModel.selectedSectionIndex + 1) of \(viewModel.sections.count)")
     }
 
-    // MARK: - Placeholder Content
+    // MARK: - Content Views
 
-    /// Temporary placeholder content for each section until Sprint 3 content views are built.
+    /// Routes each CardSection identifier to its dedicated content view.
     @ViewBuilder
-    private func placeholderContent(for section: CardSection) -> some View {
+    private func contentView(for section: CardSection) -> some View {
+        switch section.identifier {
+        case "welcome":
+            WelcomeView()
+        case "experience":
+            WorkExperienceView()
+        case "skills":
+            SkillsView()
+        case "education":
+            EducationView()
+        default:
+            comingSoonPlaceholder(for: section)
+        }
+    }
+
+    /// Temporary placeholder for sections not yet implemented (Projects, Contact).
+    private func comingSoonPlaceholder(for section: CardSection) -> some View {
         VStack(spacing: ThemeSpacing.medium) {
             Image(systemName: section.iconName)
                 .font(.system(size: 48))
@@ -123,7 +139,7 @@ struct MainView: View {
                 .font(ThemeFont.heroTitle)
                 .foregroundStyle(ThemeColor.primaryText)
 
-            Text("Content coming in Sprint 3")
+            Text("Coming in Sprint 4")
                 .font(ThemeFont.bodyText)
                 .foregroundStyle(ThemeColor.secondaryText)
         }
