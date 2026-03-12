@@ -73,13 +73,23 @@ PrajaktaKulkarniPortfolio/
 ├── Core/
 │   ├── Models/           # Data models (9 types)
 │   ├── Services/         # Firebase & Cache services
-│   ├── Data/            # SwiftData controller
-│   └── Utilities/       # Helper utilities
-├── Features/            # Feature modules (future)
+│   ├── Data/             # SwiftData controller
+│   └── Utilities/        # Helper utilities
+├── Features/
+│   ├── Main/             # Root navigation (MainView + MainViewModel)
+│   ├── Welcome/          # Personal info hero card
+│   ├── WorkExperience/   # Employment timeline
+│   ├── Skills/           # Skills grouped by category
+│   ├── Education/        # Academic background
+│   ├── Competencies/     # Core competencies & languages
+│   ├── Interests/        # Personal interests
+│   ├── Projects/         # Portfolio projects with GitHub links
+│   └── Contact/          # LinkedIn, GitHub, email links
 ├── Shared/
-│   ├── Views/           # Reusable views
-│   └── Components/      # UI components (future)
-└── Resources/           # Assets, colors, fonts
+│   ├── Components/       # CardView, CardSection
+│   ├── Theme/            # ThemeColor, ThemeFont, ThemeSpacing
+│   └── Views/            # ContentView
+└── Resources/            # Assets, colours, fonts
 ```
 
 ## Data Models
@@ -106,7 +116,10 @@ PrajaktaKulkarniPortfolio/
 ### Sprint Progress
 
 - ✅ **Sprint 1**: Firebase setup, data models, local caching
-- 🔄 **Sprint 2**: Home screen UI (upcoming)
+- ✅ **Sprint 2**: Theme design system, CardView, MainView with swipeable navigation
+- ✅ **Sprint 3**: WelcomeView, WorkExperienceView, SkillsView, EducationView
+- ✅ **Sprint 4**: CompetenciesView, InterestsView, ProjectsView (with featured project & GitHub links)
+- ✅ **Sprint 5**: ContactView with LinkedIn, GitHub, and email links
 
 ### Testing
 

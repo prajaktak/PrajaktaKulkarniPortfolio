@@ -128,6 +128,8 @@ struct MainView: View {
             InterestsView()
         case "projects":
             ProjectsView()
+        case "contact":
+            ContactView()
         default:
             comingSoonPlaceholder(for: section)
         }
