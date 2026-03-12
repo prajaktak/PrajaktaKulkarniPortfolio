@@ -97,6 +97,18 @@ struct CardSectionTests {
         #expect(hasProjects)
     }
 
+    @Test("default portfolio sections include competencies section")
+    func defaultSections_includeCompetencies() {
+        let hasCompetencies = CardSection.allPortfolioSections.contains { $0.identifier == "competencies" }
+        #expect(hasCompetencies)
+    }
+
+    @Test("default portfolio sections include interests section")
+    func defaultSections_includeInterests() {
+        let hasInterests = CardSection.allPortfolioSections.contains { $0.identifier == "interests" }
+        #expect(hasInterests)
+    }
+
     @Test("default portfolio sections include contact section")
     func defaultSections_includeContact() {
         let hasContact = CardSection.allPortfolioSections.contains { $0.identifier == "contact" }
