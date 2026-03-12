@@ -26,7 +26,7 @@ struct CardSection: Equatable, Identifiable, Sendable {
 
     /// The ordered list of all portfolio sections shown in the main navigation.
     static let allPortfolioSections: [CardSection] = [
-        CardSection(identifier: "welcome", title: "Welcome", iconName: "hand.wave.fill"),
+        CardSection(identifier: "welcome", title: "About", iconName: "person.fill"),
         CardSection(identifier: "experience", title: "Experience", iconName: "briefcase.fill"),
         CardSection(identifier: "skills", title: "Skills", iconName: "star.fill"),
         CardSection(identifier: "education", title: "Education", iconName: "graduationcap.fill"),

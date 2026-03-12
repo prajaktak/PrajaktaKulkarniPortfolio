@@ -48,7 +48,7 @@ private extension FirestoreDataPopulator {
 
         let personalInfo: [String: Any] = [
             "id": "personal_info_main",
-            "fullName": "Prajakta Sarang S Kulkarni",
+            "fullName": "Prajakta Sarang Kulkarni",
             "email": "prachee.j@gmail.com",
             "phoneNumber": "0615424886",
             "location": "HILVERSUM, Netherlands",
@@ -431,7 +431,7 @@ private extension FirestoreDataPopulator {
 
         let socialLinks: [String: Any] = [
             "id": "social_main",
-            "linkedInURL": "https://www.linkedin.com/in/prajakta-kulkarni", // Update with actual URL
+            "linkedInURL": "https://www.linkedin.com/in/kulkarnips/",
             "githubURL": "https://github.com/prajaktak",
             "emailAddress": "prachee.j@gmail.com"
         ]

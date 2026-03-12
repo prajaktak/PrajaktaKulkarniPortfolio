@@ -82,7 +82,7 @@ final class MockFirebaseService: FirebaseServiceProtocol {
 private func makePersonalInfo() -> PersonalInfo {
     PersonalInfo(
         id: "pi-1",
-        fullName: "Prajakta Sarang S Kulkarni",
+        fullName: "Prajakta Sarang Kulkarni",
         email: "prachee.j@gmail.com",
         phoneNumber: "0615424886",
         location: "Hilversum, Netherlands",
@@ -128,7 +128,7 @@ struct FirebaseService_PersonalInfoTests {
         let mockService = MockFirebaseService()
         mockService.personalInfoToReturn = makePersonalInfo()
         let result = try await mockService.fetchPersonalInfo()
-        #expect(result.fullName == "Prajakta Sarang S Kulkarni")
+        #expect(result.fullName == "Prajakta Sarang Kulkarni")
     }
 
     @Test("fetchPersonalInfo returns correct email")
