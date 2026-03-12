@@ -122,12 +122,18 @@ struct MainView: View {
             SkillsView()
         case "education":
             EducationView()
+        case "competencies":
+            CompetenciesView()
+        case "interests":
+            InterestsView()
+        case "projects":
+            ProjectsView()
         default:
             comingSoonPlaceholder(for: section)
         }
     }
 
-    /// Temporary placeholder for sections not yet implemented (Projects, Contact).
+    /// Placeholder for sections not yet implemented (Contact).
     private func comingSoonPlaceholder(for section: CardSection) -> some View {
         VStack(spacing: ThemeSpacing.medium) {
             Image(systemName: section.iconName)
@@ -139,7 +145,7 @@ struct MainView: View {
                 .font(ThemeFont.heroTitle)
                 .foregroundStyle(ThemeColor.primaryText)
 
-            Text("Coming in Sprint 4")
+            Text("Coming soon")
                 .font(ThemeFont.bodyText)
                 .foregroundStyle(ThemeColor.secondaryText)
         }
