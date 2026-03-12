@@ -8,7 +8,7 @@ import Foundation
 
 /// A value type that describes a single section/page in the portfolio.
 /// Used as the data source for the swipeable card navigation.
-struct CardSection: Equatable, Identifiable {
+struct CardSection: Equatable, Identifiable, Sendable {
 
     /// Stable unique identifier for this section (e.g. "welcome", "experience")
     let identifier: String

@@ -10,10 +10,13 @@ import FirebaseFirestore
 
 final class FirebaseService: FirebaseServiceProtocol {
 
-    private let database = Firestore.firestore()
+    private nonisolated(unsafe) let database = Firestore.firestore()
+
+    nonisolated init() {}
 
     // MARK: - Personal Info
 
+    @MainActor
     func fetchPersonalInfo() async throws -> PersonalInfo {
         let snapshot = try await database.collection("personalInfo").getDocuments()
 
@@ -27,6 +30,7 @@ final class FirebaseService: FirebaseServiceProtocol {
 
     // MARK: - Work Experience
 
+    @MainActor
     func fetchWorkExperiences() async throws -> [WorkExperience] {
         let snapshot = try await database.collection("workExperience")
             .order(by: "startDate", descending: true)
@@ -41,6 +45,7 @@ final class FirebaseService: FirebaseServiceProtocol {
 
     // MARK: - Education
 
+    @MainActor
     func fetchEducation() async throws -> [Education] {
         let snapshot = try await database.collection("education")
             .order(by: "startDate", descending: true)
@@ -55,6 +60,7 @@ final class FirebaseService: FirebaseServiceProtocol {
 
     // MARK: - Skills
 
+    @MainActor
     func fetchSkills() async throws -> [Skill] {
         let snapshot = try await database.collection("skills")
             .order(by: "category")
@@ -69,6 +75,7 @@ final class FirebaseService: FirebaseServiceProtocol {
 
     // MARK: - Languages
 
+    @MainActor
     func fetchLanguages() async throws -> [Language] {
         let snapshot = try await database.collection("languages").getDocuments()
 
@@ -81,6 +88,7 @@ final class FirebaseService: FirebaseServiceProtocol {
 
     // MARK: - Competencies
 
+    @MainActor
     func fetchCompetencies() async throws -> [Competency] {
         let snapshot = try await database.collection("competencies").getDocuments()
 
@@ -93,6 +101,7 @@ final class FirebaseService: FirebaseServiceProtocol {
 
     // MARK: - Interests
 
+    @MainActor
     func fetchInterests() async throws -> [Interest] {
         let snapshot = try await database.collection("interests").getDocuments()
 
@@ -105,6 +114,7 @@ final class FirebaseService: FirebaseServiceProtocol {
 
     // MARK: - Projects
 
+    @MainActor
     func fetchProjects() async throws -> [Project] {
         let snapshot = try await database.collection("projects")
             .order(by: "isFeatured", descending: true)
@@ -119,6 +129,7 @@ final class FirebaseService: FirebaseServiceProtocol {
 
     // MARK: - Social Links
 
+    @MainActor
     func fetchSocialLinks() async throws -> SocialLinks {
         let snapshot = try await database.collection("socialLinks").getDocuments()
 
