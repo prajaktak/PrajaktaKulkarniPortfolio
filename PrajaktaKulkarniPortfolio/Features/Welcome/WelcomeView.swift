@@ -16,16 +16,18 @@ struct WelcomeView: View {
     // MARK: - Body
 
     var body: some View {
-        Group {
-            switch viewModel.viewState {
-            case .idle, .loading:
-                loadingContent
-            case .loaded:
-                if let info = viewModel.personalInfo {
-                    loadedContent(info: info)
+        ScrollView {
+            Group {
+                switch viewModel.viewState {
+                case .idle, .loading:
+                    loadingContent
+                case .loaded:
+                    if let info = viewModel.personalInfo {
+                        loadedContent(info: info)
+                    }
+                case .error(let message):
+                    errorContent(message: message)
                 }
-            case .error(let message):
-                errorContent(message: message)
             }
         }
         .task {

@@ -28,10 +28,18 @@ enum ThemeColor {
     static let primaryText = Color(.label)
 
     /// Secondary/supporting text (captions, subtitles)
-    static let secondaryText = Color(.secondaryLabel)
+    static let secondaryText = Color(UIColor { trait in
+        trait.userInterfaceStyle == .dark
+            ? UIColor(white: 0.72, alpha: 1.0)
+            : UIColor(white: 0.30, alpha: 1.0)
+    })
 
     /// Tertiary hint text
-    static let tertiaryText = Color(.tertiaryLabel)
+    static let tertiaryText = Color(UIColor { trait in
+        trait.userInterfaceStyle == .dark
+            ? UIColor(white: 0.58, alpha: 1.0)
+            : UIColor(white: 0.42, alpha: 1.0)
+    })
 
     // MARK: - Accent Colors
 

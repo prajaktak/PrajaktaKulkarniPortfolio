@@ -22,30 +22,30 @@ enum ThemeSpacing {
     // MARK: - Card-Specific
 
     /// Internal padding inside a card
-    static let cardPadding: CGFloat = 20
+    static let cardPadding: CGFloat = 10
 
     /// Corner radius for all card surfaces
-    static let cardCornerRadius: CGFloat = 20
+    static let cardCornerRadius: CGFloat = 10
 
     /// Card drop shadow radius
-    static let cardShadowRadius: CGFloat = 12
+    static let cardShadowRadius: CGFloat = 6
 
     /// Vertical offset for card drop shadow
-    static let cardShadowYOffset: CGFloat = 4
+    static let cardShadowYOffset: CGFloat = 2
 
     // MARK: - Navigation
 
     /// Horizontal safe-area inset for full-bleed cards
-    static let horizontalPageInset: CGFloat = 16
+    static let horizontalPageInset: CGFloat = 8
 
     // MARK: - Tags / Badges
 
     /// Horizontal padding inside a skill/tech tag
-    static let tagHorizontalPadding: CGFloat = 10
+    static let tagHorizontalPadding: CGFloat = 5
 
     /// Vertical padding inside a skill/tech tag
-    static let tagVerticalPadding: CGFloat = 4
+    static let tagVerticalPadding: CGFloat = 2
 
     /// Corner radius for tag pills
-    static let tagCornerRadius: CGFloat = 8
+    static let tagCornerRadius: CGFloat = 4
 }

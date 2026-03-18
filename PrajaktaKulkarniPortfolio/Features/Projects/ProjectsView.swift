@@ -1,18 +1,19 @@
 // ProjectsView.swift
 // PrajaktaKulkarniPortfolio
 //
-// Displays projects sorted by orderIndex, with the featured project
-// highlighted at the top. Each project shows title, date range,
-// ongoing badge, description, tech stack tags, and a GitHub link button.
+// Displays projects as horizontally swipeable pages, sorted by orderIndex.
+// The featured project shows a special badge. Each page shows the project's
+// title, date range, description, tech stack, and GitHub link.
 
 import SwiftUI
 
-/// Displays the Projects card with a featured project highlight and full list.
+/// Displays the Projects card with each project as a swipeable page.
 struct ProjectsView: View {
 
     // MARK: - State
 
     @State private var viewModel = ProjectsViewModel()
+    @State private var currentPage: Int = 0
 
     // MARK: - Body
 
@@ -38,7 +39,6 @@ struct ProjectsView: View {
 
     private var loadingContent: some View {
         VStack(alignment: .leading, spacing: ThemeSpacing.medium) {
-            // Featured project skeleton
             RoundedRectangle(cornerRadius: ThemeSpacing.cardCornerRadius / 2)
                 .fill(ThemeColor.secondaryBackground)
                 .frame(maxWidth: .infinity, minHeight: 140, maxHeight: 140)
@@ -48,7 +48,6 @@ struct ProjectsView: View {
                 skeletonProjectRow
             }
         }
-        .padding(ThemeSpacing.cardPadding)
         .accessibilityLabel("Loading projects")
     }
 
@@ -68,115 +67,59 @@ struct ProjectsView: View {
     // MARK: - Loaded State
 
     private var loadedContent: some View {
-        VStack(alignment: .leading, spacing: ThemeSpacing.large) {
-            // Featured project callout
-            if let featured = viewModel.featuredProject {
-                featuredProjectCard(project: featured)
-            }
-
-            // All projects list
-            let otherProjects = viewModel.featuredProject == nil
-                ? viewModel.projects
-                : viewModel.projects.filter { $0.id != viewModel.featuredProject?.id }
-
-            if !otherProjects.isEmpty {
-                VStack(alignment: .leading, spacing: ThemeSpacing.medium) {
-                    if viewModel.featuredProject != nil {
-                        Text("All Projects")
-                            .font(ThemeFont.cardTitle)
-                            .foregroundStyle(ThemeColor.primaryText)
-                            .accessibilityAddTraits(.isHeader)
+        VStack(spacing: ThemeSpacing.small) {
+            TabView(selection: $currentPage) {
+                ForEach(Array(viewModel.projects.enumerated()), id: \.element.id) { index, project in
+                    ScrollView {
+                        projectPage(project: project)
+                            .padding(ThemeSpacing.cardPadding)
                     }
-
-                    ForEach(otherProjects, id: \.id) { project in
-                        projectRow(project: project)
-                    }
+                    .tag(index)
                 }
             }
-        }
-        .padding(ThemeSpacing.cardPadding)
-    }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: currentPage)
+            .frame(maxHeight: .infinity)
 
-    // MARK: - Featured Project Card
-
-    private func featuredProjectCard(project: Project) -> some View {
-        VStack(alignment: .leading, spacing: ThemeSpacing.small) {
-            // Header
-            HStack {
-                VStack(alignment: .leading, spacing: ThemeSpacing.extraSmall) {
-                    HStack(spacing: ThemeSpacing.small) {
-                        Text(project.title)
-                            .font(ThemeFont.cardTitle)
-                            .foregroundStyle(ThemeColor.primaryText)
-                        featuredBadge
-                    }
-                    if project.isOngoing {
-                        ongoingBadge
-                    } else {
-                        Text(dateRangeText(for: project))
-                            .font(ThemeFont.captionText)
-                            .foregroundStyle(ThemeColor.secondaryText)
-                    }
-                }
-                Spacer()
-            }
-
-            // Description
-            Text(project.projectDescription)
-                .font(ThemeFont.bodySmall)
-                .foregroundStyle(ThemeColor.secondaryText)
-                .fixedSize(horizontal: false, vertical: true)
-                .lineLimit(4)
-
-            // Tech stack tags
-            if !project.techStack.isEmpty {
-                techStackFlow(tags: project.techStack)
-            }
-
-            // GitHub button
-            if let githubURLString = project.githubURL, let url = URL(string: githubURLString) {
-                githubButton(url: url)
+            // Dot page indicator
+            if viewModel.projects.count > 1 {
+                pageIndicator
+                    .padding(.bottom, ThemeSpacing.small)
             }
         }
-        .padding(ThemeSpacing.medium)
-        .background(ThemeColor.accentPrimary.opacity(0.08))
-        .clipShape(RoundedRectangle(cornerRadius: ThemeSpacing.cardCornerRadius / 2))
-        .overlay(
-            RoundedRectangle(cornerRadius: ThemeSpacing.cardCornerRadius / 2)
-                .strokeBorder(ThemeColor.accentPrimary.opacity(0.3), lineWidth: 1)
-        )
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(accessibilityLabel(for: project))
     }
 
-    // MARK: - Project Row (non-featured)
-
-    private func projectRow(project: Project) -> some View {
-        VStack(alignment: .leading, spacing: ThemeSpacing.small) {
-            // Title and ongoing badge
-            HStack(alignment: .top) {
+    private func projectPage(project: Project) -> some View {
+        VStack(alignment: .leading, spacing: ThemeSpacing.medium) {
+            // Title + featured badge
+            HStack(alignment: .top, spacing: ThemeSpacing.small) {
                 Text(project.title)
-                    .font(ThemeFont.subheading)
+                    .font(ThemeFont.cardTitle)
                     .foregroundStyle(ThemeColor.primaryText)
-                Spacer()
-                if project.isOngoing {
-                    ongoingBadge
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if project.isFeatured {
+                    featuredBadge
                 }
             }
 
-            // Date range
-            if !project.isOngoing {
+            // Date / ongoing badge
+            if project.isOngoing {
+                ongoingBadge
+            } else {
                 Text(dateRangeText(for: project))
                     .font(ThemeFont.captionText)
                     .foregroundStyle(ThemeColor.secondaryText)
             }
 
+            Divider()
+                .background(ThemeColor.divider)
+
             // Description
             Text(project.projectDescription)
                 .font(ThemeFont.bodySmall)
                 .foregroundStyle(ThemeColor.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
-                .lineLimit(3)
 
             // Tech stack tags
             if !project.techStack.isEmpty {
@@ -187,12 +130,33 @@ struct ProjectsView: View {
             if let githubURLString = project.githubURL, let url = URL(string: githubURLString) {
                 githubButton(url: url)
             }
+
+            Spacer(minLength: 0)
         }
-        .padding(ThemeSpacing.medium)
-        .background(ThemeColor.secondaryBackground)
-        .clipShape(RoundedRectangle(cornerRadius: ThemeSpacing.cardCornerRadius / 2))
+        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel(for: project))
+    }
+
+    // MARK: - Page Indicator
+
+    private var pageIndicator: some View {
+        HStack(spacing: ThemeSpacing.small) {
+            ForEach(0..<viewModel.projects.count, id: \.self) { dotIndex in
+                Circle()
+                    .fill(dotIndex == currentPage
+                          ? ThemeColor.accentPrimary
+                          : ThemeColor.secondaryText.opacity(0.4))
+                    .frame(
+                        width: dotIndex == currentPage ? 8 : 5,
+                        height: dotIndex == currentPage ? 8 : 5
+                    )
+                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: currentPage)
+                    .accessibilityHidden(true)
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Project \(currentPage + 1) of \(viewModel.projects.count)")
     }
 
     // MARK: - Tech Stack Tags
@@ -269,7 +233,6 @@ struct ProjectsView: View {
                 .foregroundStyle(ThemeColor.secondaryText)
         }
         .frame(maxWidth: .infinity)
-        .padding(ThemeSpacing.cardPadding)
     }
 
     // MARK: - Error State
@@ -296,7 +259,6 @@ struct ProjectsView: View {
             .font(ThemeFont.bodySmall)
             .foregroundStyle(ThemeColor.accentPrimary)
         }
-        .padding(ThemeSpacing.cardPadding)
         .accessibilityElement(children: .combine)
     }
 
@@ -327,7 +289,7 @@ struct ProjectsView: View {
 // MARK: - Preview
 
 #Preview("Projects Card") {
-    ScrollView {
+    CardView(section: CardSection.allPortfolioSections[6]) {
         ProjectsView()
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -335,7 +297,7 @@ struct ProjectsView: View {
 }
 
 #Preview("Projects Card - Dark") {
-    ScrollView {
+    CardView(section: CardSection.allPortfolioSections[6]) {
         ProjectsView()
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
