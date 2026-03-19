@@ -205,9 +205,11 @@ struct ResumeView: View {
     private func leftColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             experienceSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+            Spacer()
             sectionDivider
             certificationsSection(bodySize: captionSize, headerSize: headerSize)
         }
+        .frame(maxHeight: .infinity)
     }
 
     private func experienceSection(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
@@ -260,11 +262,14 @@ struct ResumeView: View {
     private func rightColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             skillsSection(bodySize: bodySize, headerSize: headerSize)
+            Spacer()
             sectionDivider
             projectsSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+            Spacer()
             sectionDivider
             educationAndLanguages(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
         }
+        .frame(maxHeight: .infinity)
     }
 
     private func skillsSection(bodySize: CGFloat, headerSize: CGFloat) -> some View {
