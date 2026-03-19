@@ -1,9 +1,10 @@
 // ResumeView.swift
 // PrajaktaKulkarniPortfolio
 //
-// A resume-style screen matching the PDF layout:
-// left column — photo, name, contact, summary, skills, languages, certifications
-// right column — own projects, work experience
+// Resume layout matching the reference design:
+// • Full-width blue header — photo, name, title, contact links
+// • Two-column body — left: experience + certifications | right: skills + education + languages
+// Fits in one screen (no scroll) on both iPhone and iPad.
 
 import SwiftUI
 
@@ -13,7 +14,7 @@ struct ResumeView: View {
 
     var body: some View {
         ZStack {
-            ThemeColor.primaryBackground.ignoresSafeArea()
+            Color.white.ignoresSafeArea()
 
             switch viewModel.viewState {
             case .idle, .loading:
@@ -45,169 +46,196 @@ struct ResumeView: View {
 
     private var resumeContent: some View {
         GeometryReader { geo in
-            let isIPad        = geo.size.width >= 700
-            let isPhone       = geo.size.width < 500
-            let leftWidth     = geo.size.width * (isIPad ? 0.30 : 0.32)
-            let bodySize:    CGFloat = isPhone ? 9  : (isIPad ? 12 : 11)
-            let captionSize: CGFloat = isPhone ? 8  : (isIPad ? 11 : 10)
-            let headerSize:  CGFloat = isPhone ? 10 : (isIPad ? 13 : 12)
-            let padding:     CGFloat = isIPad ? ThemeSpacing.large : (isPhone ? ThemeSpacing.small : ThemeSpacing.medium)
+            let isIPad    = geo.size.width >= 700
+            let isPhone   = geo.size.width < 500
+            // Scale font sizes to available space
+            let bodySize:    CGFloat = isPhone ? 8.5 : (isIPad ? 11.5 : 10)
+            let captionSize: CGFloat = isPhone ? 7.5 : (isIPad ? 10.5 : 9)
+            let headerSize:  CGFloat = isPhone ? 9.5 : (isIPad ? 12.5 : 11)
+            let colPad:      CGFloat = isPhone ? 6   : (isIPad ? 12  : 8)
+            let leftFrac:    CGFloat = isIPad ? 0.48 : 0.46
 
-            HStack(alignment: .top, spacing: 0) {
-                leftColumn(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
-                    .padding(padding)
-                    .frame(width: leftWidth)
+            VStack(spacing: 0) {
+                // ── Full-width header ────────────────────────────────────────
+                headerBanner(geo: geo, isPhone: isPhone, isIPad: isIPad)
+
+                // ── Two-column body ──────────────────────────────────────────
+                HStack(alignment: .top, spacing: 0) {
+                    // Left column
+                    leftColumn(
+                        bodySize: bodySize,
+                        captionSize: captionSize,
+                        headerSize: headerSize
+                    )
+                    .padding(colPad)
+                    .frame(width: geo.size.width * leftFrac, alignment: .topLeading)
                     .frame(maxHeight: .infinity, alignment: .topLeading)
 
-                Divider()
-                    .background(ThemeColor.divider)
+                    // Thin divider
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.25))
+                        .frame(width: 0.5)
 
-                rightColumn(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize, showDescriptions: isIPad)
-                    .padding(padding)
+                    // Right column
+                    rightColumn(
+                        bodySize: bodySize,
+                        captionSize: captionSize,
+                        headerSize: headerSize
+                    )
+                    .padding(colPad)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background(Color.white)
         }
     }
 
-    // MARK: - Left Column
+    // MARK: - Header Banner
 
-    private func leftColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
-        VStack(alignment: .leading, spacing: ThemeSpacing.small) {
-            photoAndName(captionSize: captionSize)
-            contactInfo(captionSize: captionSize)
-            sectionDivider
-            summarySection(bodySize: captionSize)
-            sectionDivider
-            skillsSection(bodySize: captionSize, headerSize: headerSize)
-            sectionDivider
-            languagesSection(bodySize: captionSize, headerSize: headerSize)
-            sectionDivider
-            certificationsSection(bodySize: captionSize, headerSize: headerSize)
-        }
-        .padding(.trailing, ThemeSpacing.small)
-    }
+    private func headerBanner(geo: GeometryProxy, isPhone: Bool, isIPad: Bool) -> some View {
+        let bannerH: CGFloat = isPhone ? 72 : (isIPad ? 110 : 88)
+        let photoSize: CGFloat = isPhone ? 48 : (isIPad ? 72 : 58)
+        let nameSize: CGFloat  = isPhone ? 13 : (isIPad ? 20 : 16)
+        let titleSize: CGFloat = isPhone ? 9  : (isIPad ? 13 : 11)
+        let infoSize: CGFloat  = isPhone ? 7.5: (isIPad ? 10 : 8.5)
+        let hPad: CGFloat      = isPhone ? 10 : (isIPad ? 20 : 14)
 
-    private func photoAndName(captionSize: CGFloat) -> some View {
-        HStack(alignment: .center, spacing: ThemeSpacing.small) {
-            Image("Prajakta photo")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 52, height: 52)
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+        return ZStack(alignment: .leading) {
+            // Blue gradient background
+            LinearGradient(
+                colors: [Color(red: 0.12, green: 0.28, blue: 0.55), Color(red: 0.20, green: 0.45, blue: 0.75)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(viewModel.personalInfo?.fullName ?? "")
-                    .font(.system(size: captionSize + 2, weight: .bold))
-                    .foregroundStyle(Color.black)
-                Text(viewModel.personalInfo?.location ?? "")
-                    .font(.system(size: captionSize))
-                    .foregroundStyle(Color.gray)
-            }
-        }
-    }
+            HStack(alignment: .center, spacing: isPhone ? 8 : 14) {
+                // Photo
+                Image("Prajakta photo")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: photoSize, height: photoSize)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                    )
 
-    private func contactInfo(captionSize: CGFloat) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            if let email = viewModel.personalInfo?.email {
-                contactRow(icon: "envelope.fill", text: email, size: captionSize)
-            }
-            if let phone = viewModel.personalInfo?.phoneNumber {
-                contactRow(icon: "phone.fill", text: phone, size: captionSize)
-            }
-            if let github = viewModel.socialLinks?.githubURL {
-                contactRowCustom(imageName: "GitHub_Invertocat_Black", text: github, size: captionSize)
-            }
-            if let linkedin = viewModel.socialLinks?.linkedInURL {
-                contactRowCustom(imageName: "LI-Logo", text: linkedin, size: captionSize)
-            }
-        }
-    }
+                // Name + title
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(viewModel.personalInfo?.fullName ?? "")
+                        .font(.system(size: nameSize, weight: .bold))
+                        .foregroundStyle(Color.white)
 
-    private func contactRow(icon: String, text: String, size: CGFloat) -> some View {
-        HStack(spacing: 3) {
-            Image(systemName: icon)
-                .font(.system(size: size - 1))
-                .foregroundStyle(ThemeColor.accentPrimary)
-                .frame(width: 12)
-            Text(text)
-                .font(.system(size: size))
-                .foregroundStyle(Color.black)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-        }
-    }
+                    if let summary = viewModel.personalInfo?.professionalSummary,
+                       let firstLine = summary.components(separatedBy: ".").first {
+                        Text(firstLine.trimmingCharacters(in: .whitespaces))
+                            .font(.system(size: titleSize, weight: .medium))
+                            .foregroundStyle(Color.white.opacity(0.85))
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.75)
+                    }
 
-    private func contactRowCustom(imageName: String, text: String, size: CGFloat) -> some View {
-        HStack(spacing: 3) {
-            Image(imageName)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 12, height: 12)
-            Text(text)
-                .font(.system(size: size))
-                .foregroundStyle(Color.black)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-        }
-    }
+                    if let loc = viewModel.personalInfo?.location {
+                        HStack(spacing: 3) {
+                            Image(systemName: "mappin.circle.fill")
+                                .font(.system(size: infoSize))
+                            Text(loc)
+                                .font(.system(size: infoSize))
+                        }
+                        .foregroundStyle(Color.white.opacity(0.75))
+                    }
+                }
 
-    private func summarySection(bodySize: CGFloat) -> some View {
-        Group {
-            if let summary = viewModel.personalInfo?.professionalSummary {
-                Text(summary)
-                    .font(.system(size: bodySize))
-                    .foregroundStyle(Color.black.opacity(0.8))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-    }
+                Spacer()
 
-    private func skillsSection(bodySize: CGFloat, headerSize: CGFloat) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            sectionHeader("Skills", size: headerSize)
-            ForEach(viewModel.skills, id: \.id) { skill in
-                HStack(spacing: 4) {
-                    Text(skill.skillName)
-                        .font(.system(size: bodySize))
-                        .foregroundStyle(Color.black.opacity(0.85))
-                        .lineLimit(1)
-                    Spacer()
-                    if let level = skill.proficiencyLevel {
-                        Text(level)
-                            .font(.system(size: bodySize - 1))
-                            .foregroundStyle(ThemeColor.accentPrimary)
+                // Contact info (right side of header)
+                VStack(alignment: .trailing, spacing: 3) {
+                    if let email = viewModel.personalInfo?.email {
+                        bannerContactRow(icon: "envelope.fill", text: email, size: infoSize)
+                    }
+                    if let phone = viewModel.personalInfo?.phoneNumber {
+                        bannerContactRow(icon: "phone.fill", text: phone, size: infoSize)
+                    }
+                    if let github = viewModel.socialLinks?.githubURL {
+                        bannerContactRowAsset(imageName: "GitHub_Invertocat_Black", text: github, size: infoSize, tint: true)
+                    }
+                    if let linkedin = viewModel.socialLinks?.linkedInURL {
+                        bannerContactRowAsset(imageName: "LI-Logo", text: linkedin, size: infoSize, tint: false)
                     }
                 }
             }
+            .padding(.horizontal, hPad)
+            .padding(.vertical, 8)
+        }
+        .frame(height: bannerH)
+    }
+
+    private func bannerContactRow(icon: String, text: String, size: CGFloat) -> some View {
+        HStack(spacing: 3) {
+            Text(text)
+                .font(.system(size: size))
+                .foregroundStyle(Color.white.opacity(0.9))
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+            Image(systemName: icon)
+                .font(.system(size: size - 1))
+                .foregroundStyle(Color.white.opacity(0.75))
         }
     }
 
-    private func languagesSection(bodySize: CGFloat, headerSize: CGFloat) -> some View {
+    private func bannerContactRowAsset(imageName: String, text: String, size: CGFloat, tint: Bool) -> some View {
+        HStack(spacing: 3) {
+            Text(text)
+                .font(.system(size: size))
+                .foregroundStyle(Color.white.opacity(0.9))
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+            Image(imageName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: size + 1, height: size + 1)
+                .colorMultiply(tint ? .white : .white)
+                .opacity(0.85)
+        }
+    }
+
+    // MARK: - Left Column (Experience + Certifications)
+
+    private func leftColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            experienceSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+            sectionDivider
+            certificationsSection(bodySize: captionSize, headerSize: headerSize)
+        }
+    }
+
+    private func experienceSection(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            sectionHeader("Languages", size: headerSize)
-            ForEach(viewModel.languages, id: \.id) { lang in
-                HStack(spacing: 4) {
-                    Text(lang.languageName)
-                        .font(.system(size: bodySize))
-                        .foregroundStyle(Color.black.opacity(0.85))
-                        .lineLimit(1)
-                    Spacer()
-                    Text(lang.speakingProficiency)
-                        .font(.system(size: bodySize - 1))
-                        .foregroundStyle(ThemeColor.accentPrimary)
+            sectionHeader("WORK EXPERIENCE", size: headerSize)
+            sectionDivider
+            ForEach(viewModel.experiences, id: \.id) { exp in
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("\(exp.jobTitle) — \(exp.companyName)")
+                        .font(.system(size: bodySize, weight: .semibold))
+                        .foregroundStyle(Color.black)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(viewModel.dateRange(start: exp.startDate, end: exp.endDate))
+                        .font(.system(size: captionSize))
+                        .foregroundStyle(Color(red: 0.12, green: 0.28, blue: 0.55))
                 }
+                .padding(.bottom, 4)
             }
         }
     }
 
     private func certificationsSection(bodySize: CGFloat, headerSize: CGFloat) -> some View {
         let certs = viewModel.projects.filter { $0.title.lowercased().contains("certification") }
-        return VStack(alignment: .leading, spacing: 5) {
-            sectionHeader("Certifications", size: headerSize)
+        return VStack(alignment: .leading, spacing: 4) {
+            sectionHeader("CERTIFICATES", size: headerSize)
+            sectionDivider
             ForEach(certs, id: \.id) { cert in
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 1) {
                     Text(cert.title.replacingOccurrences(of: "Certification: ", with: ""))
                         .font(.system(size: bodySize, weight: .semibold))
                         .foregroundStyle(Color.black)
@@ -215,106 +243,117 @@ struct ResumeView: View {
                     if !cert.projectDescription.isEmpty {
                         Text(cert.projectDescription)
                             .font(.system(size: bodySize - 1))
-                            .foregroundStyle(Color.black.opacity(0.75))
+                            .foregroundStyle(Color.black.opacity(0.7))
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     Text(viewModel.dateRange(start: cert.startDate, end: cert.endDate))
                         .font(.system(size: bodySize - 1))
-                        .foregroundStyle(ThemeColor.accentPrimary)
+                        .foregroundStyle(Color(red: 0.12, green: 0.28, blue: 0.55))
                 }
+                .padding(.bottom, 3)
             }
         }
     }
 
-    // MARK: - Right Column
+    // MARK: - Right Column (Skills + Projects + Education + Languages)
 
-    private func rightColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat, showDescriptions: Bool) -> some View {
-        VStack(alignment: .leading, spacing: ThemeSpacing.small) {
-            projectsSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize, showDescriptions: showDescriptions)
-            Spacer()
+    private func rightColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            skillsSection(bodySize: bodySize, headerSize: headerSize)
             sectionDivider
-            experienceSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize, showDescriptions: showDescriptions)
+            projectsSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+            sectionDivider
+            educationAndLanguages(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
         }
-        .padding(.leading, ThemeSpacing.small)
     }
 
-    private func projectsSection(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat, showDescriptions: Bool) -> some View {
+    private func skillsSection(bodySize: CGFloat, headerSize: CGFloat) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            sectionHeader("SKILLS", size: headerSize)
+            sectionDivider
+            // Two-column skills grid
+            let cols = Array(repeating: GridItem(.flexible(), alignment: .leading), count: 2)
+            LazyVGrid(columns: cols, alignment: .leading, spacing: 2) {
+                ForEach(viewModel.skills, id: \.id) { skill in
+                    HStack(spacing: 3) {
+                        Circle()
+                            .fill(Color(red: 0.12, green: 0.28, blue: 0.55))
+                            .frame(width: 4, height: 4)
+                        Text(skill.skillName)
+                            .font(.system(size: bodySize))
+                            .foregroundStyle(Color.black.opacity(0.85))
+                            .lineLimit(1)
+                    }
+                }
+            }
+        }
+    }
+
+    private func projectsSection(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
         let nonCerts = viewModel.projects.filter { !$0.title.lowercased().contains("certification") }
-        return VStack(alignment: .leading, spacing: showDescriptions ? 8 : 4) {
-            sectionHeader("Own Projects:", size: headerSize)
-            ForEach(Array(nonCerts.enumerated()), id: \.element.id) { index, project in
-                HStack(alignment: .top, spacing: 3) {
-                    Text("\(index + 1).")
-                        .font(.system(size: bodySize))
+        return VStack(alignment: .leading, spacing: 4) {
+            sectionHeader("OWN PROJECTS", size: headerSize)
+            sectionDivider
+            ForEach(nonCerts, id: \.id) { project in
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(project.title)
+                        .font(.system(size: bodySize, weight: .semibold))
                         .foregroundStyle(Color.black)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(project.title)
-                            .font(.system(size: bodySize, weight: .semibold))
-                            .foregroundStyle(Color.black)
-                        Text(project.techStack.joined(separator: ", "))
-                            .font(.system(size: captionSize))
-                            .foregroundStyle(Color.black.opacity(0.65))
-                        if showDescriptions {
-                            Text(project.projectDescription)
-                                .font(.system(size: captionSize))
-                                .foregroundStyle(Color.black.opacity(0.75))
-                                .fixedSize(horizontal: false, vertical: true)
-                                .padding(.top, 1)
-                        }
-                    }
-                    .fixedSize(horizontal: false, vertical: true)
+                    Text(project.techStack.joined(separator: " · "))
+                        .font(.system(size: captionSize))
+                        .foregroundStyle(Color.black.opacity(0.6))
+                        .lineLimit(1)
                 }
-                .padding(.bottom, 6)
+                .padding(.bottom, 3)
             }
         }
     }
 
-    private func experienceSection(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat, showDescriptions: Bool) -> some View {
-        VStack(alignment: .leading, spacing: showDescriptions ? 8 : 4) {
-            sectionHeader("Experience:", size: headerSize)
-            ForEach(Array(viewModel.experiences.enumerated()), id: \.element.id) { index, exp in
-                HStack(alignment: .top, spacing: 3) {
-                    Text("\(index + 1).")
-                        .font(.system(size: bodySize))
-                        .foregroundStyle(Color.black)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("\(exp.jobTitle) — \(exp.companyName)")
-                            .font(.system(size: bodySize, weight: .semibold))
-                            .foregroundStyle(Color.black)
-                            .fixedSize(horizontal: false, vertical: true)
-                        Text(viewModel.dateRange(start: exp.startDate, end: exp.endDate))
-                            .font(.system(size: captionSize))
-                            .foregroundStyle(Color.gray)
-                        if showDescriptions && !exp.jobDescription.isEmpty {
-                            Text(exp.jobDescription)
-                                .font(.system(size: captionSize))
-                                .foregroundStyle(Color.black.opacity(0.75))
-                                .fixedSize(horizontal: false, vertical: true)
-                                .padding(.top, 1)
-                        }
+    private func educationAndLanguages(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            // Languages
+            VStack(alignment: .leading, spacing: 4) {
+                sectionHeader("LANGUAGES", size: headerSize)
+                sectionDivider
+                ForEach(viewModel.languages, id: \.id) { lang in
+                    HStack(spacing: 4) {
+                        Text(lang.languageName)
+                            .font(.system(size: bodySize))
+                            .foregroundStyle(Color.black.opacity(0.85))
+                        Spacer()
+                        Text(lang.speakingProficiency)
+                            .font(.system(size: bodySize - 1))
+                            .foregroundStyle(Color(red: 0.12, green: 0.28, blue: 0.55))
                     }
                 }
-                .padding(.bottom, 6)
             }
+            .frame(maxWidth: .infinity)
         }
     }
 
     // MARK: - Shared Helpers
 
-    private func sectionHeader(_ title: String, size: CGFloat = 12) -> some View {
+    private func sectionHeader(_ title: String, size: CGFloat) -> some View {
         Text(title)
             .font(.system(size: size, weight: .bold))
-            .foregroundStyle(Color.black)
+            .foregroundStyle(Color(red: 0.12, green: 0.28, blue: 0.55))
+            .tracking(0.5)
     }
 
     private var sectionDivider: some View {
-        Divider()
-            .background(Color.gray.opacity(0.4))
+        Rectangle()
+            .fill(Color(red: 0.12, green: 0.28, blue: 0.55).opacity(0.3))
+            .frame(height: 0.75)
     }
 }
 
 // MARK: - Preview
 
-#Preview("Resume") {
+#Preview("Resume – iPhone") {
     ResumeView()
+}
+
+#Preview("Resume – iPad") {
+    ResumeView()
+        .frame(width: 768, height: 1024)
 }
