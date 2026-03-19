@@ -49,9 +49,9 @@ struct ResumeView: View {
             let isIPad    = geo.size.width >= 700
             let isPhone   = geo.size.width < 500
             // Scale font sizes to available space
-            let bodySize:    CGFloat = isPhone ? 8.5 : (isIPad ? 11.5 : 10)
-            let captionSize: CGFloat = isPhone ? 7.5 : (isIPad ? 10.5 : 9)
-            let headerSize:  CGFloat = isPhone ? 9.5 : (isIPad ? 12.5 : 11)
+            let bodySize:    CGFloat = isPhone ? 9.5 : (isIPad ? 12.5 : 11)
+            let captionSize: CGFloat = isPhone ? 8.5 : (isIPad ? 11.5 : 10)
+            let headerSize:  CGFloat = isPhone ? 10.5 : (isIPad ? 13.5 : 12)
             let colPad:      CGFloat = isPhone ? 6   : (isIPad ? 12  : 8)
             let leftFrac:    CGFloat = isIPad ? 0.48 : 0.46
 
@@ -94,11 +94,11 @@ struct ResumeView: View {
     // MARK: - Header Banner
 
     private func headerBanner(geo: GeometryProxy, isPhone: Bool, isIPad: Bool) -> some View {
-        let bannerH: CGFloat = isPhone ? 72 : (isIPad ? 110 : 88)
-        let photoSize: CGFloat = isPhone ? 48 : (isIPad ? 72 : 58)
-        let nameSize: CGFloat  = isPhone ? 13 : (isIPad ? 20 : 16)
-        let titleSize: CGFloat = isPhone ? 9  : (isIPad ? 13 : 11)
-        let infoSize: CGFloat  = isPhone ? 7.5: (isIPad ? 10 : 8.5)
+        let bannerH: CGFloat = isPhone ? 90 : (isIPad ? 130 : 108)
+        let photoSize: CGFloat = isPhone ? 62 : (isIPad ? 90 : 74)
+        let nameSize: CGFloat  = isPhone ? 15 : (isIPad ? 22 : 18)
+        let titleSize: CGFloat = isPhone ? 10 : (isIPad ? 14 : 12)
+        let infoSize: CGFloat  = isPhone ? 8.5: (isIPad ? 11 : 9.5)
         let hPad: CGFloat      = isPhone ? 10 : (isIPad ? 20 : 14)
 
         return ZStack(alignment: .leading) {
