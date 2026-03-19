@@ -66,26 +66,6 @@ struct ContactView: View {
 
     private var loadedContent: some View {
         VStack(alignment: .leading, spacing: ThemeSpacing.medium) {
-            if let onBackToTop {
-                Button {
-                    onBackToTop()
-                } label: {
-                    HStack(spacing: ThemeSpacing.small) {
-                        Image(systemName: "arrow.up.circle.fill")
-                            .font(.system(size: 18))
-                        Text("Back to Top")
-                            .font(ThemeFont.subheading)
-                    }
-                    .foregroundStyle(ThemeColor.accentPrimary)
-                    .frame(maxWidth: .infinity)
-                    .padding(ThemeSpacing.medium)
-                    .background(ThemeColor.accentPrimary.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                }
-
-                Divider().background(ThemeColor.divider)
-            }
-
             if let links = viewModel.socialLinks {
                 // LinkedIn
                 if let url = URL(string: links.linkedInURL) {
@@ -126,6 +106,26 @@ struct ContactView: View {
                         url: url,
                         color: ThemeColor.accentSecondary
                     )
+                }
+            }
+
+            if let onBackToTop {
+                Spacer()
+                Divider().background(ThemeColor.divider)
+                Button {
+                    onBackToTop()
+                } label: {
+                    HStack(spacing: ThemeSpacing.small) {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .font(.system(size: 18))
+                        Text("Back to Top")
+                            .font(ThemeFont.subheading)
+                    }
+                    .foregroundStyle(ThemeColor.accentPrimary)
+                    .frame(maxWidth: .infinity)
+                    .padding(ThemeSpacing.medium)
+                    .background(ThemeColor.accentPrimary.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
             }
         }

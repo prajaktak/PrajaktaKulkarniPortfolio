@@ -13,6 +13,7 @@ struct MainView: View {
 
     @State private var viewModel = MainViewModel()
     @State private var selectedIndex: Int = 0
+    @State private var scrollTrigger: UUID = UUID()
 
     // MARK: - Body
 
@@ -96,6 +97,11 @@ struct MainView: View {
                         proxy.scrollTo(newIndex, anchor: .top)
                     }
                 }
+                .onChange(of: scrollTrigger) { _, _ in
+                    withAnimation(.easeInOut(duration: 0.4)) {
+                        proxy.scrollTo(selectedIndex, anchor: .top)
+                    }
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -115,9 +121,8 @@ struct MainView: View {
         case "interests":    InterestsView()
         case "projects":     ProjectsView()
         case "contact":      ContactView(onBackToTop: {
-            withAnimation(.easeInOut(duration: 0.4)) {
-                selectedIndex = 0
-            }
+            selectedIndex = 0
+            scrollTrigger = UUID()
         })
         default:
             VStack(spacing: ThemeSpacing.medium) {
