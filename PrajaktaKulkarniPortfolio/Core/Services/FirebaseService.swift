@@ -117,7 +117,7 @@ final class FirebaseService: FirebaseServiceProtocol {
     @MainActor
     func fetchProjects() async throws -> [Project] {
         let snapshot = try await database.collection("projects")
-            .order(by: "isFeatured", descending: true)
+            .order(by: "startDate", descending: true)
             .getDocuments()
 
         let projects = try snapshot.documents.map { document in
