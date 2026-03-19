@@ -94,8 +94,8 @@ struct ResumeView: View {
     // MARK: - Header Banner
 
     private func headerBanner(geo: GeometryProxy, isPhone: Bool, isIPad: Bool) -> some View {
-        let bannerH: CGFloat = isPhone ? 90 : (isIPad ? 116 : 108)
-        let photoSize: CGFloat = isPhone ? 62 : (isIPad ? 88 : 74)
+        let bannerH: CGFloat = isPhone ? 90 : (isIPad ? 96 : 108)
+        let photoSize: CGFloat = isPhone ? 62 : (isIPad ? 76 : 74)
         let nameSize: CGFloat  = isPhone ? 15 : (isIPad ? 26 : 18)
         let titleSize: CGFloat = isPhone ? 10 : (isIPad ? 18 : 12)
         let infoSize: CGFloat  = isPhone ? 8.5: (isIPad ? 15 : 9.5)
@@ -166,7 +166,7 @@ struct ResumeView: View {
                 }
             }
             .padding(.horizontal, hPad)
-            .padding(.vertical, isIPad ? 4 : 8)
+            .padding(.vertical, isIPad ? 2 : 8)
         }
         .frame(height: bannerH)
     }
