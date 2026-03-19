@@ -2,176 +2,104 @@
 // PrajaktaKulkarniPortfolio
 //
 // Root navigation view.
-// iPhone: tab bar with one tab per section.
-// iPad: split layout — narrow left panel (About, Skills + More) and
-//       wide right panel (Experience, Projects). Sizes scale with
-//       actual screen geometry so 11" and 13" both look correct.
+// Layout: left sidebar tabs + right vertical ScrollView with all sections stacked.
+// Tapping a sidebar tab scrolls to that section.
 
 import SwiftUI
 
-/// The root view of the portfolio app.
-/// Adapts automatically between iPhone tab bar and iPad split-panel layouts.
 struct MainView: View {
 
     // MARK: - State
 
     @State private var viewModel = MainViewModel()
-    @State private var showMoreSheet = false
-    @State private var moreSheetSection: CardSection? = nil
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @State private var selectedIndex: Int = 0
 
     // MARK: - Body
 
     var body: some View {
-        if horizontalSizeClass == .regular {
-            iPadLayout
-        } else {
-            iPhoneLayout
-        }
-    }
-
-    // MARK: - iPhone Layout (Tab Bar)
-
-    private var iPhoneLayout: some View {
         ZStack {
             ThemeColor.primaryBackground.ignoresSafeArea()
 
-            TabView(selection: $viewModel.selectedSectionIndex) {
-                ForEach(Array(viewModel.sections.enumerated()), id: \.offset) { sectionIndex, section in
-                    CardView(section: section) {
-                        contentView(for: section)
-                    }
-                    .tag(sectionIndex)
-                    .tabItem {
-                        Label(section.title, systemImage: section.iconName)
-                    }
-                }
+            HStack(spacing: 0) {
+                sidebar
+                Divider()
+                scrollContent
             }
-            .tint(ThemeColor.accentPrimary)
         }
         .preferredColorScheme(nil)
     }
 
-    // MARK: - iPad Layout (Split Panel)
+    // MARK: - Left Sidebar
 
-    private var iPadLayout: some View {
-        ZStack {
-            ThemeColor.primaryBackground.ignoresSafeArea()
+    private var sidebar: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(alignment: .center, spacing: 0) {
+                ForEach(Array(viewModel.sections.enumerated()), id: \.offset) { index, section in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.4)) {
+                            selectedIndex = index
+                        }
+                    } label: {
+                        VStack(spacing: 4) {
+                            Image(systemName: section.iconName)
+                                .font(.system(size: 18, weight: selectedIndex == index ? .bold : .regular))
+                                .foregroundStyle(selectedIndex == index ? ThemeColor.accentPrimary : ThemeColor.tertiaryText)
+                                .frame(width: 28, height: 28)
 
-            HStack(alignment: .top, spacing: ThemeSpacing.medium) {
+                            Text(section.title)
+                                .font(.system(size: 9, weight: selectedIndex == index ? .semibold : .regular))
+                                .foregroundStyle(selectedIndex == index ? ThemeColor.accentPrimary : ThemeColor.tertiaryText)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .frame(width: 56)
+                        }
+                        .padding(.vertical, 10)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            selectedIndex == index
+                                ? ThemeColor.accentPrimary.opacity(0.1)
+                                : Color.clear
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 4)
+                }
+            }
+            .padding(.top, ThemeSpacing.medium)
+        }
+        .frame(width: 68)
+        .background(ThemeColor.cardBackground)
+    }
 
-                // ── Left panel: scrollable, content-sized ─────────────────
+    // MARK: - Scrollable Content
+
+    private var scrollContent: some View {
+        GeometryReader { geo in
+            let cardHeight = geo.size.height - ThemeSpacing.medium * 2
+
+            ScrollViewReader { proxy in
+                ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: ThemeSpacing.medium) {
-                        iPadCard(identifier: "welcome")
-                        iPadCard(identifier: "skills")
-                        morePanel
+                        ForEach(Array(viewModel.sections.enumerated()), id: \.offset) { index, section in
+                            CardView(section: section) {
+                                contentView(for: section)
+                            }
+                            .frame(height: cardHeight)
+                            .id(index)
+                        }
                     }
                     .padding(.vertical, ThemeSpacing.medium)
-                .frame(width: 300)
-
-                // ── Right panel: two cards each taking half the height ─────
-                VStack(spacing: ThemeSpacing.medium) {
-                    iPadCard(identifier: "experience")
-                        .frame(maxHeight: .infinity)
-                    iPadCard(identifier: "projects")
-                        .frame(maxHeight: .infinity)
                 }
-                .padding(.vertical, ThemeSpacing.medium)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            .padding(.horizontal, ThemeSpacing.medium)
-        }
-        .preferredColorScheme(nil)
-        .sheet(isPresented: $showMoreSheet) {
-            if let section = moreSheetSection {
-                moreSheetContent(for: section)
-            }
-        }
-    }
-
-    // MARK: - iPad Card Helper
-
-    private func iPadCard(identifier: String) -> some View {
-        let section = viewModel.sections.first { $0.identifier == identifier }
-                   ?? CardSection.allPortfolioSections[0]
-        return CardView(section: section) {
-            contentView(for: section)
-        }
-    }
-
-    // MARK: - More Panel
-
-    private var moreSections: [CardSection] {
-        viewModel.sections.filter {
-            ["education", "competencies", "interests", "contact"].contains($0.identifier)
-        }
-    }
-
-    private var morePanel: some View {
-        VStack(alignment: .leading, spacing: ThemeSpacing.small) {
-            Text("More")
-                .font(ThemeFont.subheading)
-                .foregroundStyle(ThemeColor.primaryText)
-                .padding(.top, ThemeSpacing.extraSmall)
-
-            ForEach(moreSections) { section in
-                Button {
-                    moreSheetSection = section
-                    showMoreSheet = true
-                } label: {
-                    HStack(spacing: ThemeSpacing.small) {
-                        Image(systemName: section.iconName)
-                            .font(.system(size: 16))
-                            .foregroundStyle(ThemeColor.accentPrimary)
-                            .frame(width: 24)
-                        Text(section.title)
-                            .font(ThemeFont.bodyText)
-                            .foregroundStyle(ThemeColor.primaryText)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 12))
-                            .foregroundStyle(ThemeColor.tertiaryText)
+                .onChange(of: selectedIndex) { _, newIndex in
+                    withAnimation(.easeInOut(duration: 0.4)) {
+                        proxy.scrollTo(newIndex, anchor: .top)
                     }
-                    .padding(.horizontal, ThemeSpacing.medium)
-                    .padding(.vertical, ThemeSpacing.small)
-                    .background(ThemeColor.secondaryBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
             }
         }
-        .padding(ThemeSpacing.medium)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(ThemeColor.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: ThemeSpacing.cardCornerRadius))
-        .shadow(
-            color: ThemeColor.cardShadow,
-            radius: ThemeSpacing.cardShadowRadius,
-            x: 0,
-            y: ThemeSpacing.cardShadowYOffset
-        )
-        .padding(.horizontal, ThemeSpacing.horizontalPageInset)
-    }
-
-    // MARK: - More Sheet
-
-    private func moreSheetContent(for section: CardSection) -> some View {
-        NavigationStack {
-            ZStack {
-                ThemeColor.primaryBackground.ignoresSafeArea()
-                CardView(section: section) {
-                    contentView(for: section)
-                }
-                .padding(.vertical, ThemeSpacing.medium)
-            }
-            .navigationTitle(section.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { showMoreSheet = false }
-                        .foregroundStyle(ThemeColor.accentPrimary)
-                }
-            }
-        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(ThemeColor.primaryBackground)
     }
 
     // MARK: - Shared Content Router
@@ -186,7 +114,11 @@ struct MainView: View {
         case "competencies": CompetenciesView()
         case "interests":    InterestsView()
         case "projects":     ProjectsView()
-        case "contact":      ContactView()
+        case "contact":      ContactView(onBackToTop: {
+            withAnimation(.easeInOut(duration: 0.4)) {
+                selectedIndex = 0
+            }
+        })
         default:
             VStack(spacing: ThemeSpacing.medium) {
                 Image(systemName: section.iconName)
@@ -205,7 +137,7 @@ struct MainView: View {
 
 // MARK: - Preview
 
-#Preview("iPad Portrait") {
+#Preview("iPad") {
     MainView()
         .environment(\.horizontalSizeClass, .regular)
 }
@@ -213,4 +145,3 @@ struct MainView: View {
 #Preview("iPhone") {
     MainView()
 }
-

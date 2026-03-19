@@ -53,20 +53,20 @@ struct ResumeView: View {
             let headerSize:  CGFloat = isPhone ? 10 : (isIPad ? 13 : 12)
             let padding:     CGFloat = isIPad ? ThemeSpacing.large : (isPhone ? ThemeSpacing.small : ThemeSpacing.medium)
 
-            ScrollView {
-                HStack(alignment: .top, spacing: ThemeSpacing.medium) {
-                    leftColumn(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
-                        .frame(width: leftWidth)
+            HStack(alignment: .top, spacing: 0) {
+                leftColumn(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+                    .padding(padding)
+                    .frame(width: leftWidth)
+                    .frame(maxHeight: .infinity, alignment: .topLeading)
 
-                    Divider()
-                        .background(ThemeColor.divider)
-                        .padding(.vertical, ThemeSpacing.large)
+                Divider()
+                    .background(ThemeColor.divider)
 
-                    rightColumn(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize, showDescriptions: isIPad)
-                        .frame(maxWidth: .infinity, alignment: .topLeading)
-                }
-                .padding(padding)
+                rightColumn(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize, showDescriptions: isIPad)
+                    .padding(padding)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .background(Color.white)
         }
     }
@@ -117,10 +117,10 @@ struct ResumeView: View {
                 contactRow(icon: "phone.fill", text: phone, size: captionSize)
             }
             if let github = viewModel.socialLinks?.githubURL {
-                contactRow(icon: "chevron.left.forwardslash.chevron.right", text: github, size: captionSize)
+                contactRowCustom(imageName: "GitHub_Invertocat_Black", text: github, size: captionSize)
             }
             if let linkedin = viewModel.socialLinks?.linkedInURL {
-                contactRow(icon: "person.crop.square.fill", text: linkedin, size: captionSize)
+                contactRowCustom(imageName: "LI-Logo", text: linkedin, size: captionSize)
             }
         }
     }
@@ -131,6 +131,20 @@ struct ResumeView: View {
                 .font(.system(size: size - 1))
                 .foregroundStyle(ThemeColor.accentPrimary)
                 .frame(width: 12)
+            Text(text)
+                .font(.system(size: size))
+                .foregroundStyle(Color.black)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+        }
+    }
+
+    private func contactRowCustom(imageName: String, text: String, size: CGFloat) -> some View {
+        HStack(spacing: 3) {
+            Image(imageName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 12, height: 12)
             Text(text)
                 .font(.system(size: size))
                 .foregroundStyle(Color.black)
@@ -171,29 +185,42 @@ struct ResumeView: View {
     }
 
     private func languagesSection(bodySize: CGFloat, headerSize: CGFloat) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            sectionHeader("Langues", size: headerSize)
+        VStack(alignment: .leading, spacing: 4) {
+            sectionHeader("Languages", size: headerSize)
             ForEach(viewModel.languages, id: \.id) { lang in
-                Text("\(lang.languageName): \(lang.speakingProficiency)")
-                    .font(.system(size: bodySize))
-                    .foregroundStyle(Color.black.opacity(0.8))
+                HStack(spacing: 4) {
+                    Text(lang.languageName)
+                        .font(.system(size: bodySize))
+                        .foregroundStyle(Color.black.opacity(0.85))
+                        .lineLimit(1)
+                    Spacer()
+                    Text(lang.speakingProficiency)
+                        .font(.system(size: bodySize - 1))
+                        .foregroundStyle(ThemeColor.accentPrimary)
+                }
             }
         }
     }
 
     private func certificationsSection(bodySize: CGFloat, headerSize: CGFloat) -> some View {
         let certs = viewModel.projects.filter { $0.title.lowercased().contains("certification") }
-        return VStack(alignment: .leading, spacing: 3) {
-            sectionHeader("Certification", size: headerSize)
-            ForEach(Array(certs.enumerated()), id: \.element.id) { index, cert in
-                HStack(alignment: .top, spacing: 3) {
-                    Text("\(index + 1).")
-                        .font(.system(size: bodySize))
-                        .foregroundStyle(Color.black)
+        return VStack(alignment: .leading, spacing: 5) {
+            sectionHeader("Certifications", size: headerSize)
+            ForEach(certs, id: \.id) { cert in
+                VStack(alignment: .leading, spacing: 2) {
                     Text(cert.title.replacingOccurrences(of: "Certification: ", with: ""))
-                        .font(.system(size: bodySize))
-                        .foregroundStyle(Color.black.opacity(0.8))
+                        .font(.system(size: bodySize, weight: .semibold))
+                        .foregroundStyle(Color.black)
                         .fixedSize(horizontal: false, vertical: true)
+                    if !cert.projectDescription.isEmpty {
+                        Text(cert.projectDescription)
+                            .font(.system(size: bodySize - 1))
+                            .foregroundStyle(Color.black.opacity(0.75))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Text(viewModel.dateRange(start: cert.startDate, end: cert.endDate))
+                        .font(.system(size: bodySize - 1))
+                        .foregroundStyle(ThemeColor.accentPrimary)
                 }
             }
         }
@@ -204,6 +231,7 @@ struct ResumeView: View {
     private func rightColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat, showDescriptions: Bool) -> some View {
         VStack(alignment: .leading, spacing: ThemeSpacing.small) {
             projectsSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize, showDescriptions: showDescriptions)
+            Spacer()
             sectionDivider
             experienceSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize, showDescriptions: showDescriptions)
         }
@@ -236,6 +264,7 @@ struct ResumeView: View {
                     }
                     .fixedSize(horizontal: false, vertical: true)
                 }
+                .padding(.bottom, 6)
             }
         }
     }
@@ -265,7 +294,7 @@ struct ResumeView: View {
                         }
                     }
                 }
-                .padding(.bottom, 2)
+                .padding(.bottom, 6)
             }
         }
     }
