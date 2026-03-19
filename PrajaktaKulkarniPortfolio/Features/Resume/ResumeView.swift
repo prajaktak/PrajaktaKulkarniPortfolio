@@ -14,7 +14,7 @@ struct ResumeView: View {
 
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color.white
 
             switch viewModel.viewState {
             case .idle, .loading:
@@ -39,6 +39,7 @@ struct ResumeView: View {
                 resumeContent
             }
         }
+        .ignoresSafeArea()
         .task { await viewModel.loadAll() }
     }
 
@@ -94,8 +95,8 @@ struct ResumeView: View {
     // MARK: - Header Banner
 
     private func headerBanner(geo: GeometryProxy, isPhone: Bool, isIPad: Bool) -> some View {
-        let bannerH: CGFloat = isPhone ? 90 : (isIPad ? 96 : 108)
-        let photoSize: CGFloat = isPhone ? 62 : (isIPad ? 76 : 74)
+        let bannerH: CGFloat = isPhone ? 90 : (isIPad ? 130 : 108)
+        let photoSize: CGFloat = isPhone ? 62 : (isIPad ? 90 : 74)
         let nameSize: CGFloat  = isPhone ? 15 : (isIPad ? 26 : 18)
         let titleSize: CGFloat = isPhone ? 10 : (isIPad ? 18 : 12)
         let infoSize: CGFloat  = isPhone ? 8.5: (isIPad ? 15 : 9.5)
@@ -122,7 +123,7 @@ struct ResumeView: View {
                     )
 
                 // Name + title
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(viewModel.personalInfo?.fullName ?? "")
                         .font(.system(size: nameSize, weight: .bold))
                         .foregroundStyle(Color.white)
@@ -166,9 +167,10 @@ struct ResumeView: View {
                 }
             }
             .padding(.horizontal, hPad)
-            .padding(.vertical, isIPad ? 2 : 8)
+            .padding(.bottom, isIPad ? 2 : 8)
+            .padding(.top, geo.safeAreaInsets.top)
         }
-        .frame(height: bannerH)
+        .frame(height: bannerH + geo.safeAreaInsets.top)
     }
 
     private func bannerContactRow(icon: String, text: String, size: CGFloat) -> some View {
@@ -244,7 +246,8 @@ struct ResumeView: View {
                         Text(cert.projectDescription)
                             .font(.system(size: bodySize - 1))
                             .foregroundStyle(Color.black.opacity(0.7))
-                            .fixedSize(horizontal: false, vertical: true)
+                            .lineLimit(2)
+                            .truncationMode(.tail)
                     }
                     Text(viewModel.dateRange(start: cert.startDate, end: cert.endDate))
                         .font(.system(size: bodySize - 1))
