@@ -168,9 +168,9 @@ struct ResumeView: View {
             }
             .padding(.horizontal, hPad)
             .padding(.bottom, isIPad ? 2 : 8)
-            .padding(.top, geo.safeAreaInsets.top)
+            .padding(.top, geo.safeAreaInsets.top + (isIPad ? 16 : 8))
         }
-        .frame(height: bannerH + geo.safeAreaInsets.top)
+        .frame(height: bannerH + geo.safeAreaInsets.top + (isIPad ? 16 : 8))
     }
 
     private func bannerContactRow(icon: String, text: String, size: CGFloat) -> some View {
