@@ -69,8 +69,8 @@ struct ContactView: View {
             if let links = viewModel.socialLinks {
                 // LinkedIn
                 if let url = URL(string: links.linkedInURL) {
-                    contactLinkRow(
-                        iconName: "person.crop.square.fill",
+                    contactAssetLinkRow(
+                        assetName: "LI-Logo",
                         label: "LinkedIn",
                         subtitle: links.linkedInURL
                             .replacingOccurrences(of: "https://", with: "")
@@ -84,8 +84,8 @@ struct ContactView: View {
 
                 // GitHub
                 if let url = URL(string: links.githubURL) {
-                    contactLinkRow(
-                        iconName: "chevron.left.forwardslash.chevron.right",
+                    contactAssetLinkRow(
+                        assetName: "GitHub_Invertocat_Black",
                         label: "GitHub",
                         subtitle: links.githubURL
                             .replacingOccurrences(of: "https://", with: "")
@@ -149,6 +149,49 @@ struct ContactView: View {
                     Image(systemName: iconName)
                         .font(.system(size: 18, weight: .medium))
                         .foregroundStyle(color)
+                        .accessibilityHidden(true)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(label)
+                        .font(ThemeFont.subheading)
+                        .foregroundStyle(ThemeColor.primaryText)
+                    Text(subtitle)
+                        .font(ThemeFont.captionText)
+                        .foregroundStyle(ThemeColor.secondaryText)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
+
+                Spacer()
+
+                Image(systemName: "arrow.up.right")
+                    .font(ThemeFont.captionText)
+                    .foregroundStyle(ThemeColor.tertiaryText)
+                    .accessibilityHidden(true)
+            }
+        }
+        .accessibilityLabel("Open \(label)")
+        .accessibilityHint("Opens \(label) in browser or mail app")
+    }
+
+    private func contactAssetLinkRow(
+        assetName: String,
+        label: String,
+        subtitle: String,
+        url: URL,
+        color: Color
+    ) -> some View {
+        Link(destination: url) {
+            HStack(spacing: ThemeSpacing.medium) {
+                ZStack {
+                    Circle()
+                        .fill(color.opacity(0.12))
+                        .frame(width: 44, height: 44)
+                    Image(assetName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
                         .accessibilityHidden(true)
                 }
 
