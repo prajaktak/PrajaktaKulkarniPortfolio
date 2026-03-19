@@ -204,7 +204,7 @@ struct ResumeView: View {
 
     private func leftColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            experienceSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+            projectsSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
             sectionDivider
             certificationsSection(bodySize: captionSize, headerSize: headerSize)
         }
@@ -223,12 +223,6 @@ struct ResumeView: View {
                     Text(viewModel.dateRange(start: exp.startDate, end: exp.endDate))
                         .font(.system(size: captionSize))
                         .foregroundStyle(Color(red: 0.12, green: 0.28, blue: 0.55))
-                    if !exp.jobDescription.isEmpty {
-                        Text(exp.jobDescription)
-                            .font(.system(size: captionSize))
-                            .foregroundStyle(Color.black.opacity(0.7))
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
                 }
                 .padding(.bottom, 5)
             }
@@ -267,7 +261,7 @@ struct ResumeView: View {
         VStack(alignment: .leading, spacing: 6) {
             skillsSection(bodySize: bodySize, headerSize: headerSize)
             sectionDivider
-            projectsSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+            experienceSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
             sectionDivider
             educationAndLanguages(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
         }
