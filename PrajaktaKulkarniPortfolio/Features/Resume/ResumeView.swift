@@ -205,11 +205,9 @@ struct ResumeView: View {
     private func leftColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             experienceSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
-            Spacer()
             sectionDivider
             certificationsSection(bodySize: captionSize, headerSize: headerSize)
         }
-        .frame(maxHeight: .infinity)
     }
 
     private func experienceSection(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
@@ -217,7 +215,7 @@ struct ResumeView: View {
             sectionHeader("WORK EXPERIENCE", size: headerSize)
             sectionDivider
             ForEach(viewModel.experiences, id: \.id) { exp in
-                VStack(alignment: .leading, spacing: 1) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text("\(exp.jobTitle) — \(exp.companyName)")
                         .font(.system(size: bodySize, weight: .semibold))
                         .foregroundStyle(Color.black)
@@ -225,8 +223,14 @@ struct ResumeView: View {
                     Text(viewModel.dateRange(start: exp.startDate, end: exp.endDate))
                         .font(.system(size: captionSize))
                         .foregroundStyle(Color(red: 0.12, green: 0.28, blue: 0.55))
+                    if !exp.jobDescription.isEmpty {
+                        Text(exp.jobDescription)
+                            .font(.system(size: captionSize))
+                            .foregroundStyle(Color.black.opacity(0.7))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
-                .padding(.bottom, 4)
+                .padding(.bottom, 5)
             }
         }
     }
@@ -262,14 +266,11 @@ struct ResumeView: View {
     private func rightColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             skillsSection(bodySize: bodySize, headerSize: headerSize)
-            Spacer()
             sectionDivider
             projectsSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
-            Spacer()
             sectionDivider
             educationAndLanguages(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
         }
-        .frame(maxHeight: .infinity)
     }
 
     private func skillsSection(bodySize: CGFloat, headerSize: CGFloat) -> some View {
@@ -300,7 +301,7 @@ struct ResumeView: View {
             sectionHeader("OWN PROJECTS", size: headerSize)
             sectionDivider
             ForEach(nonCerts, id: \.id) { project in
-                VStack(alignment: .leading, spacing: 1) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(project.title)
                         .font(.system(size: bodySize, weight: .semibold))
                         .foregroundStyle(Color.black)
@@ -308,8 +309,14 @@ struct ResumeView: View {
                         .font(.system(size: captionSize))
                         .foregroundStyle(Color.black.opacity(0.6))
                         .lineLimit(1)
+                    if !project.projectDescription.isEmpty {
+                        Text(project.projectDescription)
+                            .font(.system(size: captionSize))
+                            .foregroundStyle(Color.black.opacity(0.7))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
-                .padding(.bottom, 3)
+                .padding(.bottom, 4)
             }
         }
     }
