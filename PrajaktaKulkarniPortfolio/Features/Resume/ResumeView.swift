@@ -135,7 +135,7 @@ struct ResumeView: View {
             "\(formatDate(startDate)) – \(endDate.map { formatDate($0) } ?? "Present")"
         }
 
-        let renderedPhoto: UIImage? = UIImage(named: "Prajakta photo")
+        let renderedPhoto: UIImage? = UIImage(named: "Prajakta photo").map { resizedPhoto($0, to: CGSize(width: 216, height: 216)) }
 
         return ResumePrintSnapshot(
             contact: .init(
@@ -525,6 +525,17 @@ struct ResumeView: View {
     }
 
     // MARK: - Shared Helpers
+
+    /// Scales and center-crops a UIImage to the given pixel size (matches scaledToFill behaviour).
+    private func resizedPhoto(_ image: UIImage, to size: CGSize) -> UIImage {
+        let scale = max(size.width / image.size.width, size.height / image.size.height)
+        let scaledSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+        let origin = CGPoint(x: (size.width - scaledSize.width) / 2,
+                             y: (size.height - scaledSize.height) / 2)
+        return UIGraphicsImageRenderer(size: size).image { _ in
+            image.draw(in: CGRect(origin: origin, size: scaledSize))
+        }
+    }
 
     private func sectionHeader(_ title: String, size: CGFloat) -> some View {
         Text(title).font(.system(size: size, weight: .bold))
