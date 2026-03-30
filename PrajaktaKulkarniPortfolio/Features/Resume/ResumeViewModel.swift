@@ -28,6 +28,7 @@ final class ResumeViewModel {
     private(set) var languages: [Language] = []
     private(set) var experiences: [WorkExperience] = []
     private(set) var projects: [Project] = []
+    private(set) var education: [Education] = []
     private(set) var socialLinks: SocialLinks?
 
     // MARK: - Dependencies
@@ -48,6 +49,7 @@ final class ResumeViewModel {
             async let langFetch     = firebaseService.fetchLanguages()
             async let expFetch      = firebaseService.fetchWorkExperiences()
             async let projFetch     = firebaseService.fetchProjects()
+            async let eduFetch      = firebaseService.fetchEducation()
             async let linksFetch    = firebaseService.fetchSocialLinks()
 
             personalInfo = try await infoFetch
@@ -55,6 +57,7 @@ final class ResumeViewModel {
             languages    = try await langFetch
             experiences  = try await expFetch
             projects     = try await projFetch
+            education    = try await eduFetch
             socialLinks  = try? await linksFetch
             viewState    = .loaded
         } catch {

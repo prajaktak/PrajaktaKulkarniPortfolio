@@ -15,18 +15,20 @@ final class Skill: Codable {
     var category: String
     var proficiencyLevel: String?
     var orderIndex: Int
+    var isVisible: Bool
 
-    init(id: String, skillName: String, category: String, proficiencyLevel: String?, orderIndex: Int) {
+    init(id: String, skillName: String, category: String, proficiencyLevel: String?, orderIndex: Int, isVisible: Bool = false) {
         self.id = id
         self.skillName = skillName
         self.category = category
         self.proficiencyLevel = proficiencyLevel
         self.orderIndex = orderIndex
+        self.isVisible = isVisible
     }
 
     // MARK: - Codable
     enum CodingKeys: String, CodingKey {
-        case id, skillName, category, proficiencyLevel, orderIndex
+        case id, skillName, category, proficiencyLevel, orderIndex, isVisible
     }
 
     required init(from decoder: Decoder) throws {
@@ -36,6 +38,7 @@ final class Skill: Codable {
         category = try container.decode(String.self, forKey: .category)
         proficiencyLevel = try container.decodeIfPresent(String.self, forKey: .proficiencyLevel)
         orderIndex = try container.decode(Int.self, forKey: .orderIndex)
+        isVisible = try container.decodeIfPresent(Bool.self, forKey: .isVisible) ?? false
     }
 
     func encode(to encoder: Encoder) throws {
@@ -45,5 +48,6 @@ final class Skill: Codable {
         try container.encode(category, forKey: .category)
         try container.encodeIfPresent(proficiencyLevel, forKey: .proficiencyLevel)
         try container.encode(orderIndex, forKey: .orderIndex)
+        try container.encode(isVisible, forKey: .isVisible)
     }
 }
