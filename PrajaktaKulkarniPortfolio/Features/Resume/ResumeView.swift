@@ -84,9 +84,10 @@ struct ResumeView: View {
         // iPad requires a source for the popover anchor
         if let popover = activityViewController.popoverPresentationController {
             popover.sourceView = scene.windows.first
+            let screenBounds = scene.screen.bounds
             popover.sourceRect = CGRect(
-                x: UIScreen.main.bounds.maxX - 60,
-                y: UIScreen.main.bounds.maxY - 100,
+                x: screenBounds.maxX - 60,
+                y: screenBounds.maxY - 100,
                 width: 0, height: 0
             )
             popover.permittedArrowDirections = []
@@ -313,9 +314,12 @@ struct ResumeView: View {
 
     private func leftColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 6) {
+            sectionDivider
             projectsSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+                .padding(.bottom, 10)
             sectionDivider
             certificationsSection(bodySize: captionSize, headerSize: headerSize)
+                .padding(.bottom, 10)
             sectionDivider
             educationSection(bodySize: captionSize, headerSize: headerSize)
         }
@@ -329,22 +333,18 @@ struct ResumeView: View {
         return VStack(alignment: .leading, spacing: 4) {
             sectionHeader("INDEPENDENT PROJECTS", size: headerSize)
             sectionDivider
+                .padding(.bottom, 10)
             ForEach(Array(nonCerts), id: \.id) { project in
                 VStack(alignment: .leading, spacing: 2) {
                     Text(project.title)
                         .font(.system(size: bodySize, weight: .semibold)).foregroundStyle(Color.black)
-                        .padding(.bottom, 2)
-                    HStack {
-                        VStack(alignment: .leading, spacing: 0) {
-                            if !project.projectDescription.isEmpty {
-                                Text(highlightKeywords(in: project.projectDescription, keywords: project.techStack, size: captionSize))
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                        .padding(.leading, 10)
+                        .padding(.bottom, 5)
+                    if !project.projectDescription.isEmpty {
+                        Text(highlightKeywords(in: project.projectDescription, keywords: project.techStack, size: captionSize))
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
-                .padding(.bottom, 5)
+                .padding(.bottom, 10)
             }
         }
     }
@@ -370,13 +370,13 @@ struct ResumeView: View {
         return VStack(alignment: .leading, spacing: 4) {
             sectionHeader("CERTIFICATES", size: headerSize)
             sectionDivider
+                .padding(.bottom, 10)
             ForEach(certifications, id: \.id) { certification in
                 VStack(alignment: .leading, spacing: 1) {
                     Text(certification.title.replacingOccurrences(of: "Certification: ", with: ""))
                         .font(.system(size: bodySize, weight: .semibold)).foregroundStyle(Color.black)
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(2)
-                    HStack {
+                        
                         VStack(alignment: .leading, spacing: 0) {
                             if !certification.projectDescription.isEmpty {
                                 Text(certification.projectDescription)
@@ -387,10 +387,8 @@ struct ResumeView: View {
                                 .font(.system(size: bodySize - 1))
                                 .foregroundStyle(ThemeColor.resumePrimaryBlue)
                         }
-                        .padding(.leading, 10)
-                    }
                 }
-                .padding(.bottom, 5)
+                .padding(.bottom, 10)
             }
         }
     }
@@ -399,13 +397,13 @@ struct ResumeView: View {
         VStack(alignment: .leading, spacing: 4) {
             sectionHeader("EDUCATION", size: headerSize)
             sectionDivider
+                .padding(.bottom, 10)
             ForEach(viewModel.education, id: \.id) { educationItem in
-                VStack(alignment: .leading, spacing: 1) {
+                VStack(alignment: .leading, spacing: 0) {
                     Text(educationItem.degreeName)
                         .font(.system(size: bodySize, weight: .semibold)).foregroundStyle(Color.black)
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(2)
-                    HStack(alignment: .top) {
+                        
                         VStack(alignment: .leading, spacing: 0) {
                             Text(educationItem.institutionName)
                                 .font(.system(size: bodySize - 1)).foregroundStyle(Color.black.opacity(0.7))
@@ -414,8 +412,7 @@ struct ResumeView: View {
                                 .font(.system(size: bodySize - 1))
                                 .foregroundStyle(ThemeColor.resumePrimaryBlue)
                         }
-                        .padding(.leading, 10)
-                    }
+                        
                 }
                 .padding(.bottom, 5)
             }
@@ -426,9 +423,12 @@ struct ResumeView: View {
 
     private func rightColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 6) {
+            sectionDivider
             experienceSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+                .padding(.bottom, 10)
             sectionDivider
             skillsSection(bodySize: bodySize, headerSize: headerSize)
+                .padding(.bottom, 10)
             sectionDivider
             educationAndLanguages(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
         }
@@ -438,6 +438,7 @@ struct ResumeView: View {
         VStack(alignment: .leading, spacing: 4) {
             sectionHeader("SKILLS", size: headerSize)
             sectionDivider
+                .padding(.bottom, 10)
             VStack(alignment: .leading, spacing: 2) {
                 ForEach(Array(skillPairs().enumerated()), id: \.offset) { _, pair in
                     HStack(alignment: .top, spacing: 0) {
@@ -452,7 +453,7 @@ struct ResumeView: View {
                     }
                 }
             }
-            .padding(.top, 5)
+            .padding(.bottom, 10)
         }
     }
 
@@ -482,12 +483,12 @@ struct ResumeView: View {
         VStack(alignment: .leading, spacing: 4) {
             sectionHeader("WORK EXPERIENCE", size: headerSize)
             sectionDivider
+                .padding(.bottom, 10)
             ForEach(viewModel.experiences, id: \.id) { experience in
                 VStack(alignment: .leading, spacing: 2) {
                     Text(experience.companyName)
                         .font(.system(size: bodySize, weight: .semibold)).foregroundStyle(Color.black)
                         .fixedSize(horizontal: false, vertical: true)
-                    HStack {
                         VStack(alignment: .leading) {
                             Text(experience.jobTitle)
                                 .font(.system(size: bodySize, weight: .medium)).foregroundStyle(Color.black)
@@ -496,10 +497,10 @@ struct ResumeView: View {
                                 .font(.system(size: captionSize))
                                 .foregroundStyle(ThemeColor.resumePrimaryBlue)
                         }
-                        .padding(.leading, 10)
-                    }
+                        .padding(.top, 5)
+                       
                 }
-                .padding(.bottom, 5)
+                .padding(.bottom, 10)
             }
         }
     }
@@ -509,7 +510,7 @@ struct ResumeView: View {
             VStack(alignment: .leading, spacing: 4) {
                 sectionHeader("LANGUAGES", size: headerSize)
                 sectionDivider
-                    .padding(.bottom, 5)
+                    .padding(.bottom, 10)
                 ForEach(viewModel.languages, id: \.id) { language in
                     HStack(spacing: 4) {
                         Text(language.languageName).font(.system(size: bodySize)).foregroundStyle(Color.black.opacity(0.85))

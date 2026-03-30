@@ -126,10 +126,12 @@ struct ResumePrintView: View {
 
     private var leftCol: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // Latest 3 non-certification projects
+            printDivider
+
+            // Independent Projects
             let nonCerts = snapshot.projects.filter { !$0.isCert }.prefix(3)
             printSectionHeader("INDEPENDENT PROJECTS")
-            printDivider
+            printDivider.padding(.bottom, 4)
             ForEach(Array(nonCerts), id: \.id) { project in
                 VStack(alignment: .leading, spacing: 2) {
                     Text(project.title).font(.system(size: bodySize, weight: .semibold)).foregroundStyle(Color.black)
@@ -141,12 +143,12 @@ struct ResumePrintView: View {
                 .padding(.bottom, 4)
             }
 
-            printDivider
+            printSectionSeparator
 
             // Certifications
             let certs = snapshot.projects.filter { $0.isCert }
             printSectionHeader("CERTIFICATES")
-            printDivider
+            printDivider.padding(.bottom, 4)
             ForEach(certs, id: \.id) { cert in
                 VStack(alignment: .leading, spacing: 1) {
                     Text(cert.title.replacingOccurrences(of: "Certification: ", with: ""))
@@ -162,11 +164,11 @@ struct ResumePrintView: View {
                 .padding(.bottom, 3)
             }
 
-            printDivider
+            printSectionSeparator
 
             // Education
             printSectionHeader("EDUCATION")
-            printDivider
+            printDivider.padding(.bottom, 4)
             ForEach(snapshot.education, id: \.id) { educationItem in
                 VStack(alignment: .leading, spacing: 1) {
                     Text(educationItem.degree)
@@ -185,9 +187,29 @@ struct ResumePrintView: View {
 
     private var rightCol: some View {
         VStack(alignment: .leading, spacing: 6) {
+            printDivider
+
+            // Work Experience — matches on-screen right column order
+            printSectionHeader("WORK EXPERIENCE")
+            printDivider.padding(.bottom, 4)
+            ForEach(snapshot.experiences, id: \.id) { experience in
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(experience.company)
+                        .font(.system(size: bodySize, weight: .semibold)).foregroundStyle(Color.black)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(experience.title)
+                        .font(.system(size: bodySize, weight: .medium)).foregroundStyle(Color.black)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(experience.dateRange).font(.system(size: captionSize)).foregroundStyle(ThemeColor.resumePrimaryBlue)
+                }
+                .padding(.bottom, 5)
+            }
+
+            printSectionSeparator
+
             // Skills
             printSectionHeader("SKILLS")
-            printDivider
+            printDivider.padding(.bottom, 4)
             VStack(alignment: .leading, spacing: 2) {
                 ForEach(Array(printSkillPairs().enumerated()), id: \.offset) { _, pair in
                     HStack(alignment: .top, spacing: 0) {
@@ -201,26 +223,11 @@ struct ResumePrintView: View {
                 }
             }
 
-            printDivider
-
-            // Work Experience
-            printSectionHeader("WORK EXPERIENCE")
-            printDivider
-            ForEach(snapshot.experiences, id: \.id) { experience in
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("\(experience.title) — \(experience.company)")
-                        .font(.system(size: bodySize, weight: .semibold)).foregroundStyle(Color.black)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text(experience.dateRange).font(.system(size: captionSize)).foregroundStyle(ThemeColor.resumePrimaryBlue)
-                }
-                .padding(.bottom, 5)
-            }
-
-            printDivider
+            printSectionSeparator
 
             // Languages
             printSectionHeader("LANGUAGES")
-            printDivider
+            printDivider.padding(.bottom, 4)
             ForEach(snapshot.languages, id: \.id) { language in
                 HStack(spacing: 4) {
                     Text(language.name).font(.system(size: bodySize)).foregroundStyle(Color.black.opacity(0.85))
@@ -274,8 +281,15 @@ struct ResumePrintView: View {
         Text(title).font(.system(size: headerSize, weight: .bold)).foregroundStyle(ThemeColor.resumePrimaryBlue).tracking(0.5)
     }
 
+    /// Thin rule placed directly under a section header.
     private var printDivider: some View {
         Rectangle().fill(ThemeColor.resumePrimaryBlue.opacity(0.3)).frame(height: 0.75)
+    }
+
+    /// Thin rule used between two sections — includes vertical breathing room.
+    private var printSectionSeparator: some View {
+        Rectangle().fill(ThemeColor.resumePrimaryBlue.opacity(0.3)).frame(height: 0.75)
+            .padding(.top, 6)
     }
 }
 
