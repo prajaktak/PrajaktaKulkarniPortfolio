@@ -122,46 +122,33 @@ struct ResumePrintView: View {
         return attributed
     }
 
-    // MARK: Left column
+    // MARK: Left column — Work Experience + Certifications + Education
 
     private var leftCol: some View {
         VStack(alignment: .leading, spacing: 6) {
             printDivider
 
-            // Independent Projects
-            let nonCerts = snapshot.projects.filter { !$0.isCert }.prefix(3)
-            printSectionHeader("INDEPENDENT PROJECTS")
+            // Work Experience
+            printSectionHeader("WORK EXPERIENCE")
             printDivider.padding(.bottom, 4)
-            ForEach(Array(nonCerts), id: \.id) { project in
+            ForEach(snapshot.experiences, id: \.id) { experience in
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(project.title).font(.system(size: bodySize, weight: .semibold)).foregroundStyle(Color.black)
-                    if !project.description.isEmpty {
-                        Text(printHighlightKeywords(in: project.description, techStack: project.techStack))
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                }
-                .padding(.bottom, 4)
-            }
-
-            printSectionSeparator
-
-            // Certifications
-            let certs = snapshot.projects.filter { $0.isCert }
-            printSectionHeader("CERTIFICATES")
-            printDivider.padding(.bottom, 4)
-            ForEach(certs, id: \.id) { cert in
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(cert.title.replacingOccurrences(of: "Certification: ", with: ""))
-                        .font(.system(size: captionSize, weight: .semibold)).foregroundStyle(Color.black)
+                    Text(experience.company)
+                        .font(.system(size: bodySize, weight: .semibold)).foregroundStyle(Color.black)
                         .fixedSize(horizontal: false, vertical: true)
-                    if !cert.description.isEmpty {
-                        Text(cert.description)
-                            .font(.system(size: captionSize - 1)).foregroundStyle(Color.black.opacity(0.7))
-                            .lineLimit(2).truncationMode(.tail)
+                    Text(experience.title)
+                        .font(.system(size: bodySize, weight: .medium)).foregroundStyle(Color.black)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(experience.dateRange).font(.system(size: captionSize)).foregroundStyle(ThemeColor.resumePrimaryBlue)
+                    if !experience.description.isEmpty {
+                        Text(experience.description)
+                            .font(.system(size: captionSize))
+                            .foregroundStyle(Color.black.opacity(0.7))
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.top, 1)
                     }
-                    Text(cert.dateRange).font(.system(size: captionSize - 1)).foregroundStyle(ThemeColor.resumePrimaryBlue)
                 }
-                .padding(.bottom, 3)
+                .padding(.bottom, 5)
             }
 
             printSectionSeparator
@@ -180,29 +167,58 @@ struct ResumePrintView: View {
                 }
                 .padding(.bottom, 3)
             }
+
+            printSectionSeparator
+
+            // Languages
+            printSectionHeader("LANGUAGES")
+            printDivider.padding(.bottom, 4)
+            ForEach(snapshot.languages, id: \.id) { language in
+                HStack(spacing: 4) {
+                    Text(language.name).font(.system(size: bodySize)).foregroundStyle(Color.black.opacity(0.85))
+                    Spacer()
+                    Text(language.proficiency).font(.system(size: bodySize - 1)).foregroundStyle(ThemeColor.resumePrimaryBlue)
+                }
+            }
         }
     }
 
-    // MARK: Right column
+    // MARK: Right column — Projects + Skills + Languages
 
     private var rightCol: some View {
         VStack(alignment: .leading, spacing: 6) {
             printDivider
 
-            // Work Experience — matches on-screen right column order
-            printSectionHeader("WORK EXPERIENCE")
+            // Independent Projects
+            let nonCerts = snapshot.projects.filter { !$0.isCert }.prefix(3)
+            printSectionHeader("INDEPENDENT PROJECTS")
             printDivider.padding(.bottom, 4)
-            ForEach(snapshot.experiences, id: \.id) { experience in
+            ForEach(Array(nonCerts), id: \.id) { project in
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(experience.company)
-                        .font(.system(size: bodySize, weight: .semibold)).foregroundStyle(Color.black)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text(experience.title)
-                        .font(.system(size: bodySize, weight: .medium)).foregroundStyle(Color.black)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text(experience.dateRange).font(.system(size: captionSize)).foregroundStyle(ThemeColor.resumePrimaryBlue)
+                    Text(project.title).font(.system(size: bodySize, weight: .semibold)).foregroundStyle(Color.black)
+                    if !project.description.isEmpty {
+                        Text(printHighlightKeywords(in: project.description, techStack: project.techStack))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    if !project.responsibilities.isEmpty {
+                        VStack(alignment: .leading, spacing: 1) {
+                            ForEach(project.responsibilities, id: \.self) { responsibility in
+                                HStack(alignment: .top, spacing: 3) {
+                                    Circle()
+                                        .fill(Color.black.opacity(0.6))
+                                        .frame(width: 2.5, height: 2.5)
+                                        .padding(.top, captionSize * 0.45)
+                                    Text(responsibility)
+                                        .font(.system(size: captionSize))
+                                        .foregroundStyle(Color.black.opacity(0.7))
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                            }
+                        }
+                        .padding(.top, 2)
+                    }
                 }
-                .padding(.bottom, 5)
+                .padding(.bottom, 4)
             }
 
             printSectionSeparator
@@ -225,15 +241,23 @@ struct ResumePrintView: View {
 
             printSectionSeparator
 
-            // Languages
-            printSectionHeader("LANGUAGES")
+            // Certifications
+            let certs = snapshot.projects.filter { $0.isCert }
+            printSectionHeader("CERTIFICATES")
             printDivider.padding(.bottom, 4)
-            ForEach(snapshot.languages, id: \.id) { language in
-                HStack(spacing: 4) {
-                    Text(language.name).font(.system(size: bodySize)).foregroundStyle(Color.black.opacity(0.85))
-                    Spacer()
-                    Text(language.proficiency).font(.system(size: bodySize - 1)).foregroundStyle(ThemeColor.resumePrimaryBlue)
+            ForEach(certs, id: \.id) { cert in
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(cert.title.replacingOccurrences(of: "Certification: ", with: ""))
+                        .font(.system(size: captionSize, weight: .semibold)).foregroundStyle(Color.black)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if !cert.description.isEmpty {
+                        Text(cert.description)
+                            .font(.system(size: captionSize - 1)).foregroundStyle(Color.black.opacity(0.7))
+                            .lineLimit(2).truncationMode(.tail)
+                    }
+                    Text(cert.dateRange).font(.system(size: captionSize - 1)).foregroundStyle(ThemeColor.resumePrimaryBlue)
                 }
+                .padding(.bottom, 3)
             }
         }
     }
@@ -269,9 +293,10 @@ struct ResumePrintView: View {
     }
 
     private func printSkillBullet(_ skill: ResumePrintSnapshot.SkillItem) -> some View {
-        HStack(spacing: 3) {
+        HStack(alignment: .top, spacing: 3) {
             Circle().fill(ThemeColor.resumePrimaryBlue).frame(width: 4, height: 4)
-            Text(skill.name).font(.system(size: bodySize)).foregroundStyle(Color.black.opacity(0.85)).lineLimit(1)
+                .padding(.top, bodySize * 0.3)
+            Text(skill.name).font(.system(size: bodySize)).foregroundStyle(Color.black.opacity(0.85)).lineLimit(2)
         }
     }
 

@@ -157,7 +157,8 @@ struct ResumeView: View {
                 .init(id: $0.id,
                       title: $0.jobTitle,
                       company: $0.companyName,
-                      dateRange: formatDateRange(start: $0.startDate, end: $0.endDate))
+                      dateRange: formatDateRange(start: $0.startDate, end: $0.endDate),
+                      description: $0.jobDescription)
             },
             projects: viewModel.projects.map {
                 .init(id: $0.id,
@@ -165,7 +166,8 @@ struct ResumeView: View {
                       techStack: $0.techStack.joined(separator: " · "),
                       description: $0.projectDescription,
                       dateRange: formatDateRange(start: $0.startDate, end: $0.endDate),
-                      isCert: $0.title.lowercased().contains("certification"))
+                      isCert: $0.title.lowercased().contains("certification"),
+                      responsibilities: $0.responsibilities)
             },
             languages: viewModel.languages.map { .init(id: $0.id, name: $0.languageName, proficiency: $0.speakingProficiency) },
             education: viewModel.education.map {
@@ -193,14 +195,14 @@ struct ResumeView: View {
                     .padding(.bottom, 10)
 
                 HStack(alignment: .top, spacing: 0) {
-                    leftColumn(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+                    leftColumn(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize, isIPad: isIPad)
                         .padding(columnPadding)
                         .frame(width: geometry.size.width * leftColumnFraction, alignment: .topLeading)
                         .frame(maxHeight: .infinity, alignment: .topLeading)
 
                     Rectangle().fill(Color.gray.opacity(0.25)).frame(width: 0.5)
 
-                    rightColumn(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+                    rightColumn(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize, isIPad: isIPad)
                         .padding(columnPadding)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 }
@@ -312,20 +314,31 @@ struct ResumeView: View {
 
     // MARK: - Left Column (Own Projects + Certifications)
 
-    private func leftColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
+    private func leftColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat, isIPad: Bool = false) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             sectionDivider
-            projectsSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
-                .padding(.bottom, 10)
-            sectionDivider
-            certificationsSection(bodySize: captionSize, headerSize: headerSize)
-                .padding(.bottom, 10)
-            sectionDivider
-            educationSection(bodySize: captionSize, headerSize: headerSize)
+            if isIPad {
+                // iPad left: Work Experience → Education → Languages
+                experienceSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+                    .padding(.bottom, 10)
+                sectionDivider
+                educationSection(bodySize: captionSize, headerSize: headerSize)
+                    .padding(.bottom, 10)
+                sectionDivider
+                educationAndLanguages(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+            } else {
+                projectsSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize, isIPad: false)
+                    .padding(.bottom, 10)
+                sectionDivider
+                certificationsSection(bodySize: captionSize, headerSize: headerSize)
+                    .padding(.bottom, 10)
+                sectionDivider
+                educationSection(bodySize: captionSize, headerSize: headerSize)
+            }
         }
     }
 
-    private func projectsSection(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
+    private func projectsSection(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat, isIPad: Bool = false) -> some View {
         // Latest 3 non-certification projects (already ordered by startDate desc)
         let nonCerts = viewModel.projects
             .filter { !$0.title.lowercased().contains("certification") }
@@ -342,6 +355,23 @@ struct ResumeView: View {
                     if !project.projectDescription.isEmpty {
                         Text(highlightKeywords(in: project.projectDescription, keywords: project.techStack, size: captionSize))
                             .fixedSize(horizontal: false, vertical: true)
+                    }
+                    if isIPad && !project.responsibilities.isEmpty {
+                        VStack(alignment: .leading, spacing: 2) {
+                            ForEach(project.responsibilities, id: \.self) { responsibility in
+                                HStack(alignment: .top, spacing: 4) {
+                                    Circle()
+                                        .fill(Color.black.opacity(0.6))
+                                        .frame(width: 3, height: 3)
+                                        .padding(.top, captionSize * 0.45)
+                                    Text(responsibility)
+                                        .font(.system(size: captionSize))
+                                        .foregroundStyle(Color.black.opacity(0.7))
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                            }
+                        }
+                        .padding(.top, 3)
                     }
                 }
                 .padding(.bottom, 10)
@@ -421,16 +451,27 @@ struct ResumeView: View {
 
     // MARK: - Right Column (Skills + Work Experience + Languages)
 
-    private func rightColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat) -> some View {
+    private func rightColumn(bodySize: CGFloat, captionSize: CGFloat, headerSize: CGFloat, isIPad: Bool = false) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             sectionDivider
-            experienceSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
-                .padding(.bottom, 10)
-            sectionDivider
-            skillsSection(bodySize: bodySize, headerSize: headerSize)
-                .padding(.bottom, 10)
-            sectionDivider
-            educationAndLanguages(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+            if isIPad {
+                // iPad right: Projects → Skills → Certifications
+                projectsSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize, isIPad: true)
+                    .padding(.bottom, 10)
+                sectionDivider
+                skillsSection(bodySize: bodySize, headerSize: headerSize)
+                    .padding(.bottom, 10)
+                sectionDivider
+                certificationsSection(bodySize: captionSize, headerSize: headerSize)
+            } else {
+                experienceSection(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+                    .padding(.bottom, 10)
+                sectionDivider
+                skillsSection(bodySize: bodySize, headerSize: headerSize)
+                    .padding(.bottom, 10)
+                sectionDivider
+                educationAndLanguages(bodySize: bodySize, captionSize: captionSize, headerSize: headerSize)
+            }
         }
     }
 
@@ -473,9 +514,10 @@ struct ResumeView: View {
     }
 
     private func skillBullet(_ skill: Skill, size: CGFloat) -> some View {
-        HStack(spacing: 3) {
+        HStack(alignment: .top, spacing: 3) {
             Circle().fill(ThemeColor.resumePrimaryBlue).frame(width: 4, height: 4)
-            Text(skill.skillName).font(.system(size: size)).foregroundStyle(Color.black.opacity(0.85)).lineLimit(1)
+                .padding(.top, size * 0.3)
+            Text(skill.skillName).font(.system(size: size)).foregroundStyle(Color.black.opacity(0.85)).lineLimit(2)
         }
     }
 
@@ -489,16 +531,22 @@ struct ResumeView: View {
                     Text(experience.companyName)
                         .font(.system(size: bodySize, weight: .semibold)).foregroundStyle(Color.black)
                         .fixedSize(horizontal: false, vertical: true)
-                        VStack(alignment: .leading) {
-                            Text(experience.jobTitle)
-                                .font(.system(size: bodySize, weight: .medium)).foregroundStyle(Color.black)
-                                .fixedSize(horizontal: false, vertical: true)
-                            Text(viewModel.dateRange(start: experience.startDate, end: experience.endDate))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(experience.jobTitle)
+                            .font(.system(size: bodySize, weight: .medium)).foregroundStyle(Color.black)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text(viewModel.dateRange(start: experience.startDate, end: experience.endDate))
+                            .font(.system(size: captionSize))
+                            .foregroundStyle(ThemeColor.resumePrimaryBlue)
+                        if !experience.jobDescription.isEmpty {
+                            Text(experience.jobDescription)
                                 .font(.system(size: captionSize))
-                                .foregroundStyle(ThemeColor.resumePrimaryBlue)
+                                .foregroundStyle(Color.black.opacity(0.7))
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(.top, 2)
                         }
-                        .padding(.top, 5)
-                       
+                    }
+                    .padding(.top, 5)
                 }
                 .padding(.bottom, 10)
             }

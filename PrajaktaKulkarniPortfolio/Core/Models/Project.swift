@@ -21,6 +21,7 @@ final class Project: Codable {
     var demoVideoURL: String?
     var isFeatured: Bool
     var orderIndex: Int
+    var responsibilities: [String]
 
     var isOngoing: Bool {
         endDate == nil
@@ -37,7 +38,8 @@ final class Project: Codable {
         screenshotURLs: [String],
         demoVideoURL: String?,
         isFeatured: Bool,
-        orderIndex: Int
+        orderIndex: Int,
+        responsibilities: [String] = []
     ) {
         self.id = id
         self.title = title
@@ -50,11 +52,13 @@ final class Project: Codable {
         self.demoVideoURL = demoVideoURL
         self.isFeatured = isFeatured
         self.orderIndex = orderIndex
+        self.responsibilities = responsibilities
     }
 
     // MARK: - Codable
     enum CodingKeys: String, CodingKey {
         case id, title, startDate, endDate, projectDescription, techStack, githubURL, screenshotURLs, demoVideoURL, isFeatured, orderIndex
+        case responsibilities = "Responsibility"
     }
 
     required init(from decoder: Decoder) throws {
@@ -70,6 +74,14 @@ final class Project: Codable {
         demoVideoURL = try container.decodeIfPresent(String.self, forKey: .demoVideoURL)
         isFeatured = try container.decode(Bool.self, forKey: .isFeatured)
         orderIndex = try container.decode(Int.self, forKey: .orderIndex)
+        // Firebase may store this as an array or a single string; handle both.
+        if let array = try? container.decode([String].self, forKey: .responsibilities) {
+            responsibilities = array
+        } else if let single = try? container.decode(String.self, forKey: .responsibilities) {
+            responsibilities = [single]
+        } else {
+            responsibilities = []
+        }
     }
 
     func encode(to encoder: Encoder) throws {
@@ -85,5 +97,6 @@ final class Project: Codable {
         try container.encodeIfPresent(demoVideoURL, forKey: .demoVideoURL)
         try container.encode(isFeatured, forKey: .isFeatured)
         try container.encode(orderIndex, forKey: .orderIndex)
+        try container.encode(responsibilities, forKey: .responsibilities)
     }
 }

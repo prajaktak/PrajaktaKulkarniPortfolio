@@ -18,8 +18,8 @@ struct ResumePrintSnapshot {
         var photo: UIImage?
     }
     struct SkillItem { var id: String; var name: String }
-    struct ExperienceItem { var id: String; var title: String; var company: String; var dateRange: String }
-    struct ProjectItem { var id: String; var title: String; var techStack: String; var description: String; var dateRange: String; var isCert: Bool }
+    struct ExperienceItem { var id: String; var title: String; var company: String; var dateRange: String; var description: String = "" }
+    struct ProjectItem { var id: String; var title: String; var techStack: String; var description: String; var dateRange: String; var isCert: Bool; var responsibilities: [String] = [] }
     struct LanguageItem { var id: String; var name: String; var proficiency: String }
     struct EducationItem { var id: String; var degree: String; var institution: String; var dateRange: String }
 
