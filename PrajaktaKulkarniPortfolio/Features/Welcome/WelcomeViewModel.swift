@@ -31,6 +31,9 @@ final class WelcomeViewModel {
     /// The loaded personal info, non-nil when viewState is .loaded
     private(set) var personalInfo: PersonalInfo?
 
+    /// The loaded social links, non-nil when successfully fetched
+    private(set) var socialLinks: SocialLinks?
+
     // MARK: - Dependencies
 
     private let firebaseService: any FirebaseServiceProtocol
@@ -43,15 +46,18 @@ final class WelcomeViewModel {
 
     // MARK: - Actions
 
-    /// Fetches PersonalInfo from Firebase. Updates viewState accordingly.
+    /// Fetches PersonalInfo and SocialLinks from Firebase in parallel. Updates viewState accordingly.
     func loadPersonalInfo() async {
         viewState = .loading
         do {
-            let info = try await firebaseService.fetchPersonalInfo()
-            personalInfo = info
+            async let infoFetch = firebaseService.fetchPersonalInfo()
+            async let linksFetch = firebaseService.fetchSocialLinks()
+            personalInfo = try await infoFetch
+            socialLinks = try? await linksFetch
             viewState = .loaded
         } catch {
             personalInfo = nil
+            socialLinks = nil
             viewState = .error(error.localizedDescription)
         }
     }

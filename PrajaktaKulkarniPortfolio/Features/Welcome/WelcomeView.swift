@@ -16,16 +16,18 @@ struct WelcomeView: View {
     // MARK: - Body
 
     var body: some View {
-        Group {
-            switch viewModel.viewState {
-            case .idle, .loading:
-                loadingContent
-            case .loaded:
-                if let info = viewModel.personalInfo {
-                    loadedContent(info: info)
+        ScrollView {
+            Group {
+                switch viewModel.viewState {
+                case .idle, .loading:
+                    loadingContent
+                case .loaded:
+                    if let info = viewModel.personalInfo {
+                        loadedContent(info: info)
+                    }
+                case .error(let message):
+                    errorContent(message: message)
                 }
-            case .error(let message):
-                errorContent(message: message)
             }
         }
         .task {
@@ -61,24 +63,38 @@ struct WelcomeView: View {
     private func loadedContent(info: PersonalInfo) -> some View {
         VStack(alignment: .leading, spacing: ThemeSpacing.large) {
             heroSection(info: info)
+            contactSection(info: info, links: viewModel.socialLinks)
             Divider().background(ThemeColor.divider)
             summarySection(info: info)
-            contactSection(info: info)
         }
         .padding(ThemeSpacing.cardPadding)
     }
 
     private func heroSection(info: PersonalInfo) -> some View {
-        VStack(alignment: .leading, spacing: ThemeSpacing.extraSmall) {
-            Text(info.fullName)
-                .font(ThemeFont.heroTitle)
-                .foregroundStyle(ThemeColor.primaryText)
-                .accessibilityAddTraits(.isHeader)
+        HStack {
+            VStack(alignment: .leading, spacing: ThemeSpacing.extraSmall) {
+                Image("Prajakta photo")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 100, height: 100)
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(ThemeColor.accentPrimary, lineWidth: 2))
+                    .accessibilityLabel("Profile photo of \(info.fullName)")
+                Spacer()
+            }
+            VStack(alignment: .leading, spacing: ThemeSpacing.extraSmall) {
 
-            Text(info.location)
-                .font(ThemeFont.subheading)
-                .foregroundStyle(ThemeColor.accentPrimary)
+                Text(info.fullName)
+                    .font(ThemeFont.sectionTitle)
+                    .foregroundStyle(ThemeColor.primaryText)
+                    .accessibilityAddTraits(.isHeader)
+
+                Text(info.location)
+                    .font(ThemeFont.subheading)
+                    .foregroundStyle(ThemeColor.accentPrimary)
+            }
         }
+        
     }
 
     private func summarySection(info: PersonalInfo) -> some View {
@@ -94,10 +110,16 @@ struct WelcomeView: View {
         }
     }
 
-    private func contactSection(info: PersonalInfo) -> some View {
+    private func contactSection(info: PersonalInfo, links: SocialLinks?) -> some View {
         VStack(alignment: .leading, spacing: ThemeSpacing.small) {
             contactRow(iconName: "envelope.fill", value: info.email)
             contactRow(iconName: "phone.fill", value: info.phoneNumber)
+            if let githubURL = links.flatMap({ URL(string: $0.githubURL) }) {
+                linkRow(badge: gitHubBadge, label: "github.com/prajaktak", url: githubURL)
+            }
+            if let linkedInURL = links.flatMap({ URL(string: $0.linkedInURL) }) {
+                linkRow(badge: linkedInBadge, label: "linkedin.com/in/kulkarnips", url: linkedInURL)
+            }
         }
     }
 
@@ -113,6 +135,32 @@ struct WelcomeView: View {
                 .font(ThemeFont.bodySmall)
                 .foregroundStyle(ThemeColor.secondaryText)
         }
+    }
+
+    private func linkRow(badge: some View, label: String, url: URL) -> some View {
+        Link(destination: url) {
+            HStack(spacing: ThemeSpacing.small) {
+                badge
+                    .frame(width: 16, height: 16)
+                    .accessibilityHidden(true)
+
+                Text(label)
+                    .font(ThemeFont.bodySmall)
+                    .foregroundStyle(ThemeColor.accentPrimary)
+            }
+        }
+    }
+
+    private var linkedInBadge: some View {
+        Image("LI-Logo")
+            .resizable()
+            .scaledToFit()
+    }
+
+    private var gitHubBadge: some View {
+        Image("GitHub_Invertocat_Black")
+            .resizable()
+            .scaledToFit()
     }
 
     // MARK: - Error State

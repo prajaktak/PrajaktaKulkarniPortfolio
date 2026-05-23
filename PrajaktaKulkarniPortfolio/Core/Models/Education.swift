@@ -14,6 +14,7 @@ final class Education: Codable {
     var degreeName: String
     var fieldOfStudy: String
     var institutionName: String
+    var university: String?
     var startDate: Date
     var endDate: Date
     var subjectsStudied: String
@@ -25,6 +26,7 @@ final class Education: Codable {
         degreeName: String,
         fieldOfStudy: String,
         institutionName: String,
+        university: String? = nil,
         startDate: Date,
         endDate: Date,
         subjectsStudied: String,
@@ -35,6 +37,7 @@ final class Education: Codable {
         self.degreeName = degreeName
         self.fieldOfStudy = fieldOfStudy
         self.institutionName = institutionName
+        self.university = university
         self.startDate = startDate
         self.endDate = endDate
         self.subjectsStudied = subjectsStudied
@@ -44,7 +47,7 @@ final class Education: Codable {
 
     // MARK: - Codable
     enum CodingKeys: String, CodingKey {
-        case id, degreeName, fieldOfStudy, institutionName, startDate, endDate, subjectsStudied, hasDiploma, orderIndex
+        case id, degreeName, fieldOfStudy, institutionName, university, startDate, endDate, subjectsStudied, hasDiploma, orderIndex
     }
 
     required init(from decoder: Decoder) throws {
@@ -53,6 +56,7 @@ final class Education: Codable {
         degreeName = try container.decode(String.self, forKey: .degreeName)
         fieldOfStudy = try container.decode(String.self, forKey: .fieldOfStudy)
         institutionName = try container.decode(String.self, forKey: .institutionName)
+        university = try container.decodeIfPresent(String.self, forKey: .university)
         startDate = try container.decode(Date.self, forKey: .startDate)
         endDate = try container.decode(Date.self, forKey: .endDate)
         subjectsStudied = try container.decode(String.self, forKey: .subjectsStudied)
@@ -66,6 +70,7 @@ final class Education: Codable {
         try container.encode(degreeName, forKey: .degreeName)
         try container.encode(fieldOfStudy, forKey: .fieldOfStudy)
         try container.encode(institutionName, forKey: .institutionName)
+        try container.encodeIfPresent(university, forKey: .university)
         try container.encode(startDate, forKey: .startDate)
         try container.encode(endDate, forKey: .endDate)
         try container.encode(subjectsStudied, forKey: .subjectsStudied)

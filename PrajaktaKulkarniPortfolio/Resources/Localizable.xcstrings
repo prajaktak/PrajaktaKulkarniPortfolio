@@ -1,0 +1,606 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@, speaking: %@, writing: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, speaking: %2$@, writing: %3$@"
+          }
+        }
+      }
+    },
+    "%@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@: %2$@"
+          }
+        }
+      }
+    },
+    "%lld hrs/week" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld uur/week"
+          }
+        }
+      }
+    },
+    "About Me" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Over mij"
+          }
+        }
+      }
+    },
+    "All CV data has been successfully populated in Firestore! Check the Xcode console for details." : {
+
+    },
+    "Back to Top" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terug naar boven"
+          }
+        }
+      }
+    },
+    "CERTIFICATES" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CERTIFICATEN"
+          }
+        }
+      }
+    },
+    "Click the button below to populate your Firestore database with CV data" : {
+
+    },
+    "Coming soon" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Binnenkort"
+          }
+        }
+      }
+    },
+    "Competencies" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Competenties"
+          }
+        }
+      }
+    },
+    "Could not load competencies" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Competenties konden niet worden geladen"
+          }
+        }
+      }
+    },
+    "Could not load contact info" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contactgegevens konden niet worden geladen"
+          }
+        }
+      }
+    },
+    "Could not load education" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opleiding kon niet worden geladen"
+          }
+        }
+      }
+    },
+    "Could not load experience" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Werkervaring kon niet worden geladen"
+          }
+        }
+      }
+    },
+    "Could not load interests" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interesses konden niet worden geladen"
+          }
+        }
+      }
+    },
+    "Could not load profile" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profiel kon niet worden geladen"
+          }
+        }
+      }
+    },
+    "Could not load projects" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projecten konden niet worden geladen"
+          }
+        }
+      }
+    },
+    "Could not load resume" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cv kon niet worden geladen"
+          }
+        }
+      }
+    },
+    "Could not load skills" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vaardigheden konden niet worden geladen"
+          }
+        }
+      }
+    },
+    "Current" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Huidig"
+          }
+        }
+      }
+    },
+    "Diploma" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diploma"
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klaar"
+          }
+        }
+      }
+    },
+    "EDUCATION" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OPLEIDING"
+          }
+        }
+      }
+    },
+    "Email" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-mail"
+          }
+        }
+      }
+    },
+    "Experience %lld of %lld" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ervaring %lld van %lld"
+          }
+        }
+      }
+    },
+    "Featured" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uitgelicht"
+          }
+        }
+      }
+    },
+    "Firestore Data Populator" : {
+
+    },
+    "INDEPENDENT PROJECTS" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EIGEN PROJECTEN"
+          }
+        }
+      }
+    },
+    "Languages" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Talen"
+          }
+        }
+      }
+    },
+    "LANGUAGES" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TALEN"
+          }
+        }
+      }
+    },
+    "Loading competencies" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Competenties laden"
+          }
+        }
+      }
+    },
+    "Loading contact information" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contactgegevens laden"
+          }
+        }
+      }
+    },
+    "Loading education" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opleiding laden"
+          }
+        }
+      }
+    },
+    "Loading interests" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interesses laden"
+          }
+        }
+      }
+    },
+    "Loading personal information" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Persoonlijke informatie laden"
+          }
+        }
+      }
+    },
+    "Loading projects" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projecten laden"
+          }
+        }
+      }
+    },
+    "Loading resume…" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cv laden…"
+          }
+        }
+      }
+    },
+    "Loading skills" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vaardigheden laden"
+          }
+        }
+      }
+    },
+    "Loading work experience" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Werkervaring laden"
+          }
+        }
+      }
+    },
+    "More" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meer"
+          }
+        }
+      }
+    },
+    "No competencies listed yet" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nog geen competenties beschikbaar"
+          }
+        }
+      }
+    },
+    "No education listed yet" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nog geen opleiding beschikbaar"
+          }
+        }
+      }
+    },
+    "No experience listed yet" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nog geen werkervaring beschikbaar"
+          }
+        }
+      }
+    },
+    "No interests listed yet" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nog geen interesses beschikbaar"
+          }
+        }
+      }
+    },
+    "No projects listed yet" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nog geen projecten beschikbaar"
+          }
+        }
+      }
+    },
+    "No skills listed yet" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nog geen vaardigheden beschikbaar"
+          }
+        }
+      }
+    },
+    "OK" : {
+
+    },
+    "Ongoing" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lopend"
+          }
+        }
+      }
+    },
+    "Open %@" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open %@"
+          }
+        }
+      }
+    },
+    "Opens %@ in browser or mail app" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opent %@ in browser of mailapp"
+          }
+        }
+      }
+    },
+    "Opens GitHub in browser" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opent GitHub in browser"
+          }
+        }
+      }
+    },
+    "Populate Firestore" : {
+
+    },
+    "Populating Firestore..." : {
+
+    },
+    "Present" : {
+      "comment" : "End date shown when a job or project is still ongoing",
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heden"
+          }
+        }
+      }
+    },
+    "Profile photo of %@" : {
+
+    },
+    "Project %lld of %lld" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project %lld van %lld"
+          }
+        }
+      }
+    },
+    "SKILLS" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VAARDIGHEDEN"
+          }
+        }
+      }
+    },
+    "Speaking" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spreken"
+          }
+        }
+      }
+    },
+    "Subjects" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vakken"
+          }
+        }
+      }
+    },
+    "Success!" : {
+
+    },
+    "Try Again" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opnieuw proberen"
+          }
+        }
+      }
+    },
+    "View on GitHub" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bekijk op GitHub"
+          }
+        }
+      }
+    },
+    "View project on GitHub" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bekijk project op GitHub"
+          }
+        }
+      }
+    },
+    "WORK EXPERIENCE" : {
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WERKERVARING"
+          }
+        }
+      }
+    },
+    "Writing" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schrijven"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

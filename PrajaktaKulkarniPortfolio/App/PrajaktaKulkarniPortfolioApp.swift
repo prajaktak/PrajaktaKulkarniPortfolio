@@ -17,7 +17,7 @@ struct PrajaktaKulkarniPortfolioApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainView()
+            ResumeView()
         }
     }
 }

@@ -35,7 +35,16 @@ final class DataController {
             modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
             modelContext = ModelContext(modelContainer)
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            // Schema migration failed (e.g. new non-optional property added).
+            // Fall back to in-memory storage so the app stays functional;
+            // Firebase will re-populate data on next fetch.
+            print("⚠️ SwiftData migration failed, using in-memory store: \(error)")
+            let memoryConfig = ModelConfiguration(isStoredInMemoryOnly: true)
+            guard let container = try? ModelContainer(for: schema, configurations: [memoryConfig]) else {
+                fatalError("Could not create ModelContainer: \(error)")
+            }
+            modelContainer = container
+            modelContext = ModelContext(modelContainer)
         }
     }
 

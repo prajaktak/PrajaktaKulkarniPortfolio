@@ -16,16 +16,18 @@ struct InterestsView: View {
     // MARK: - Body
 
     var body: some View {
-        Group {
-            switch viewModel.viewState {
-            case .idle, .loading:
-                loadingContent
-            case .loaded:
-                loadedContent
-            case .empty:
-                emptyContent
-            case .error(let message):
-                errorContent(message: message)
+        ScrollView {
+            Group {
+                switch viewModel.viewState {
+                case .idle, .loading:
+                    loadingContent
+                case .loaded:
+                    loadedContent
+                case .empty:
+                    emptyContent
+                case .error(let message):
+                    errorContent(message: message)
+                }
             }
         }
         .task {

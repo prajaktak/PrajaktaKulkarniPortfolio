@@ -46,11 +46,9 @@ struct CardView<Content: View>: View {
                 Divider()
                     .background(ThemeColor.divider)
 
-                ScrollView {
-                    content
-                        .padding(ThemeSpacing.cardPadding)
-                }
+                content
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .padding(ThemeSpacing.cardPadding)
         }
         .padding(.horizontal, ThemeSpacing.horizontalPageInset)

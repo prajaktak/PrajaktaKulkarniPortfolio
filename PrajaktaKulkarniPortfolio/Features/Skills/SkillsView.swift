@@ -66,12 +66,14 @@ struct SkillsView: View {
     // MARK: - Loaded State
 
     private var loadedContent: some View {
-        VStack(alignment: .leading, spacing: ThemeSpacing.large) {
-            ForEach(viewModel.sortedCategories, id: \.self) { category in
-                categorySection(category: category)
+        ScrollView {
+            VStack(alignment: .leading, spacing: ThemeSpacing.large) {
+                ForEach(viewModel.sortedCategories, id: \.self) { category in
+                    categorySection(category: category)
+                }
             }
+            .padding(ThemeSpacing.cardPadding)
         }
-        .padding(ThemeSpacing.cardPadding)
     }
 
     private func categorySection(category: String) -> some View {

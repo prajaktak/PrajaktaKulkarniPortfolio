@@ -9,6 +9,10 @@ import SwiftUI
 /// Displays the Contact card with social links and email.
 struct ContactView: View {
 
+    // MARK: - Properties
+
+    var onBackToTop: (() -> Void)? = nil
+
     // MARK: - State
 
     @State private var viewModel = ContactViewModel()
@@ -16,14 +20,16 @@ struct ContactView: View {
     // MARK: - Body
 
     var body: some View {
-        Group {
-            switch viewModel.viewState {
-            case .idle, .loading:
-                loadingContent
-            case .loaded:
-                loadedContent
-            case .error(let message):
-                errorContent(message: message)
+        ScrollView {
+            Group {
+                switch viewModel.viewState {
+                case .idle, .loading:
+                    loadingContent
+                case .loaded:
+                    loadedContent
+                case .error(let message):
+                    errorContent(message: message)
+                }
             }
         }
         .task {
@@ -63,8 +69,8 @@ struct ContactView: View {
             if let links = viewModel.socialLinks {
                 // LinkedIn
                 if let url = URL(string: links.linkedInURL) {
-                    contactLinkRow(
-                        iconName: "person.crop.square.fill",
+                    contactAssetLinkRow(
+                        assetName: "LI-Logo",
                         label: "LinkedIn",
                         subtitle: links.linkedInURL
                             .replacingOccurrences(of: "https://", with: "")
@@ -78,8 +84,8 @@ struct ContactView: View {
 
                 // GitHub
                 if let url = URL(string: links.githubURL) {
-                    contactLinkRow(
-                        iconName: "chevron.left.forwardslash.chevron.right",
+                    contactAssetLinkRow(
+                        assetName: "GitHub_Invertocat_Black",
                         label: "GitHub",
                         subtitle: links.githubURL
                             .replacingOccurrences(of: "https://", with: "")
@@ -100,6 +106,26 @@ struct ContactView: View {
                         url: url,
                         color: ThemeColor.accentSecondary
                     )
+                }
+            }
+
+            if let onBackToTop {
+                Spacer()
+                Divider().background(ThemeColor.divider)
+                Button {
+                    onBackToTop()
+                } label: {
+                    HStack(spacing: ThemeSpacing.small) {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .font(.system(size: 18))
+                        Text("Back to Top")
+                            .font(ThemeFont.subheading)
+                    }
+                    .foregroundStyle(ThemeColor.accentPrimary)
+                    .frame(maxWidth: .infinity)
+                    .padding(ThemeSpacing.medium)
+                    .background(ThemeColor.accentPrimary.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
             }
         }
@@ -123,6 +149,49 @@ struct ContactView: View {
                     Image(systemName: iconName)
                         .font(.system(size: 18, weight: .medium))
                         .foregroundStyle(color)
+                        .accessibilityHidden(true)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(label)
+                        .font(ThemeFont.subheading)
+                        .foregroundStyle(ThemeColor.primaryText)
+                    Text(subtitle)
+                        .font(ThemeFont.captionText)
+                        .foregroundStyle(ThemeColor.secondaryText)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
+
+                Spacer()
+
+                Image(systemName: "arrow.up.right")
+                    .font(ThemeFont.captionText)
+                    .foregroundStyle(ThemeColor.tertiaryText)
+                    .accessibilityHidden(true)
+            }
+        }
+        .accessibilityLabel("Open \(label)")
+        .accessibilityHint("Opens \(label) in browser or mail app")
+    }
+
+    private func contactAssetLinkRow(
+        assetName: String,
+        label: String,
+        subtitle: String,
+        url: URL,
+        color: Color
+    ) -> some View {
+        Link(destination: url) {
+            HStack(spacing: ThemeSpacing.medium) {
+                ZStack {
+                    Circle()
+                        .fill(color.opacity(0.12))
+                        .frame(width: 44, height: 44)
+                    Image(assetName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
                         .accessibilityHidden(true)
                 }
 

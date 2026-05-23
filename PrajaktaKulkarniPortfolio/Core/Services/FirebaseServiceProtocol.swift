@@ -9,14 +9,16 @@ import Foundation
 
 /// Defines the interface for fetching CV data from a remote source.
 /// Conforming to a protocol allows ViewModels and tests to use mocks instead of real Firebase.
+/// All methods are @MainActor because the SwiftData @Model classes they return are non-Sendable
+/// and all callers (ViewModels) are already main-actor-isolated.
 protocol FirebaseServiceProtocol {
-    func fetchPersonalInfo() async throws -> PersonalInfo
-    func fetchWorkExperiences() async throws -> [WorkExperience]
-    func fetchEducation() async throws -> [Education]
-    func fetchSkills() async throws -> [Skill]
-    func fetchLanguages() async throws -> [Language]
-    func fetchCompetencies() async throws -> [Competency]
-    func fetchInterests() async throws -> [Interest]
-    func fetchProjects() async throws -> [Project]
-    func fetchSocialLinks() async throws -> SocialLinks
+    @MainActor func fetchPersonalInfo() async throws -> PersonalInfo
+    @MainActor func fetchWorkExperiences() async throws -> [WorkExperience]
+    @MainActor func fetchEducation() async throws -> [Education]
+    @MainActor func fetchSkills() async throws -> [Skill]
+    @MainActor func fetchLanguages() async throws -> [Language]
+    @MainActor func fetchCompetencies() async throws -> [Competency]
+    @MainActor func fetchInterests() async throws -> [Interest]
+    @MainActor func fetchProjects() async throws -> [Project]
+    @MainActor func fetchSocialLinks() async throws -> SocialLinks
 }

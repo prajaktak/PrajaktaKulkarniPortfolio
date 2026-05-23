@@ -15,6 +15,7 @@ import Foundation
 
 /// Mock implementation of FirebaseServiceProtocol for unit testing.
 /// Returns pre-configured test data without any network calls.
+@MainActor
 final class MockFirebaseService: FirebaseServiceProtocol {
 
     var personalInfoToReturn: PersonalInfo?
@@ -81,7 +82,7 @@ final class MockFirebaseService: FirebaseServiceProtocol {
 private func makePersonalInfo() -> PersonalInfo {
     PersonalInfo(
         id: "pi-1",
-        fullName: "Prajakta Sarang S Kulkarni",
+        fullName: "Prajakta Sarang Kulkarni",
         email: "prachee.j@gmail.com",
         phoneNumber: "0615424886",
         location: "Hilversum, Netherlands",
@@ -119,6 +120,7 @@ private func makeSocialLinks() -> SocialLinks {
 
 // MARK: - Personal Info Tests
 
+@MainActor
 struct FirebaseService_PersonalInfoTests {
 
     @Test("fetchPersonalInfo returns correct full name")
@@ -126,7 +128,7 @@ struct FirebaseService_PersonalInfoTests {
         let mockService = MockFirebaseService()
         mockService.personalInfoToReturn = makePersonalInfo()
         let result = try await mockService.fetchPersonalInfo()
-        #expect(result.fullName == "Prajakta Sarang S Kulkarni")
+        #expect(result.fullName == "Prajakta Sarang Kulkarni")
     }
 
     @Test("fetchPersonalInfo returns correct email")
@@ -166,6 +168,7 @@ struct FirebaseService_PersonalInfoTests {
 
 // MARK: - Work Experience Tests
 
+@MainActor
 struct FirebaseService_WorkExperienceTests {
 
     @Test("fetchWorkExperiences returns correct count")
@@ -212,6 +215,7 @@ struct FirebaseService_WorkExperienceTests {
 
 // MARK: - Skills Tests
 
+@MainActor
 struct FirebaseService_SkillsTests {
 
     @Test("fetchSkills returns correct count")
@@ -251,6 +255,7 @@ struct FirebaseService_SkillsTests {
 
 // MARK: - Languages Tests
 
+@MainActor
 struct FirebaseService_LanguagesTests {
 
     @Test("fetchLanguages returns correct count")
@@ -288,6 +293,7 @@ struct FirebaseService_LanguagesTests {
 
 // MARK: - Competencies Tests
 
+@MainActor
 struct FirebaseService_CompetenciesTests {
 
     @Test("fetchCompetencies returns correct count")
@@ -314,6 +320,7 @@ struct FirebaseService_CompetenciesTests {
 
 // MARK: - Interests Tests
 
+@MainActor
 struct FirebaseService_InterestsTests {
 
     @Test("fetchInterests returns correct count")
@@ -340,6 +347,7 @@ struct FirebaseService_InterestsTests {
 
 // MARK: - Projects Tests
 
+@MainActor
 struct FirebaseService_ProjectsTests {
 
     @Test("fetchProjects returns featured project as first result")
@@ -411,6 +419,7 @@ struct FirebaseService_ProjectsTests {
 
 // MARK: - Social Links Tests
 
+@MainActor
 struct FirebaseService_SocialLinksTests {
 
     @Test("fetchSocialLinks returns LinkedIn URL containing linkedin.com")
@@ -449,6 +458,7 @@ struct FirebaseService_SocialLinksTests {
 
 // MARK: - FirebaseServiceError Tests
 
+@MainActor
 struct FirebaseServiceErrorTests {
 
     @Test("noDataFound error has non-empty description")

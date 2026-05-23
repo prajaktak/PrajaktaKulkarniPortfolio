@@ -28,10 +28,18 @@ enum ThemeColor {
     static let primaryText = Color(.label)
 
     /// Secondary/supporting text (captions, subtitles)
-    static let secondaryText = Color(.secondaryLabel)
+    static let secondaryText = Color(UIColor { trait in
+        trait.userInterfaceStyle == .dark
+            ? UIColor(white: 0.72, alpha: 1.0)
+            : UIColor(white: 0.30, alpha: 1.0)
+    })
 
     /// Tertiary hint text
-    static let tertiaryText = Color(.tertiaryLabel)
+    static let tertiaryText = Color(UIColor { trait in
+        trait.userInterfaceStyle == .dark
+            ? UIColor(white: 0.58, alpha: 1.0)
+            : UIColor(white: 0.42, alpha: 1.0)
+    })
 
     // MARK: - Accent Colors
 
@@ -54,4 +62,15 @@ enum ThemeColor {
 
     /// Skill tag background
     static let tagBackground = Color(.tertiarySystemBackground)
+
+    // MARK: - Resume Brand Colors
+
+    /// Primary brand blue — resume section headers, bullets, date labels
+    static let resumePrimaryBlue = Color(red: 0.12, green: 0.28, blue: 0.55)
+
+    /// Lighter gradient blue — resume banner gradient end colour
+    static let resumeLightBlue = Color(red: 0.20, green: 0.45, blue: 0.75)
+
+    /// Dark banner blue — resume contact sub-banner background
+    static let resumeDarkBanner = Color(red: 0.08, green: 0.18, blue: 0.38)
 }

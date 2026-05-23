@@ -24,6 +24,15 @@ struct WelcomeViewModelTests {
         )
     }
 
+    private func makeSocialLinks() -> SocialLinks {
+        SocialLinks(
+            id: "sl-1",
+            linkedInURL: "https://www.linkedin.com/in/kulkarnips/",
+            githubURL: "https://github.com/prajaktak",
+            emailAddress: "prajakta@example.com"
+        )
+    }
+
     // MARK: - Initial State
 
     @Test("initialises in idle state")
@@ -75,6 +84,27 @@ struct WelcomeViewModelTests {
         let viewModel = WelcomeViewModel(firebaseService: mockService)
         await viewModel.loadPersonalInfo()
         #expect(viewModel.viewState == .error("No data found in Firestore"))
+    }
+
+    @Test("loadPersonalInfo populates socialLinks on success")
+    func loadPersonalInfo_populatesSocialLinksOnSuccess() async {
+        let mockService = MockFirebaseService()
+        mockService.personalInfoToReturn = makePersonalInfo()
+        mockService.socialLinksToReturn = makeSocialLinks()
+        let viewModel = WelcomeViewModel(firebaseService: mockService)
+        await viewModel.loadPersonalInfo()
+        #expect(viewModel.socialLinks?.githubURL == "https://github.com/prajaktak")
+    }
+
+    @Test("loadPersonalInfo keeps socialLinks nil when social links fetch fails")
+    func loadPersonalInfo_keepsSocialLinksNilOnLinksFailure() async {
+        let mockService = MockFirebaseService()
+        mockService.personalInfoToReturn = makePersonalInfo()
+        mockService.socialLinksToReturn = nil
+        let viewModel = WelcomeViewModel(firebaseService: mockService)
+        await viewModel.loadPersonalInfo()
+        #expect(viewModel.socialLinks == nil)
+        #expect(viewModel.viewState == .loaded)
     }
 
     @Test("loadPersonalInfo keeps personalInfo nil on failure")

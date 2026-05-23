@@ -14,8 +14,8 @@ struct CardSectionTests {
     func init_setsIdentifier() {
         let section = CardSection(
             identifier: "welcome",
-            title: "Welcome",
-            iconName: "hand.wave.fill"
+            title: "About",
+            iconName: "person.fill"
         )
         #expect(section.identifier == "welcome")
     }
@@ -42,14 +42,14 @@ struct CardSectionTests {
 
     @Test("two sections with same identifier are equal")
     func equality_sameSectionsAreEqual() {
-        let sectionOne = CardSection(identifier: "welcome", title: "Welcome", iconName: "hand.wave.fill")
-        let sectionTwo = CardSection(identifier: "welcome", title: "Welcome", iconName: "hand.wave.fill")
+        let sectionOne = CardSection(identifier: "welcome", title: "About", iconName: "person.fill")
+        let sectionTwo = CardSection(identifier: "welcome", title: "About", iconName: "person.fill")
         #expect(sectionOne == sectionTwo)
     }
 
     @Test("two sections with different identifiers are not equal")
     func equality_differentIdentifiersAreNotEqual() {
-        let sectionOne = CardSection(identifier: "welcome", title: "Welcome", iconName: "hand.wave.fill")
+        let sectionOne = CardSection(identifier: "welcome", title: "About", iconName: "person.fill")
         let sectionTwo = CardSection(identifier: "skills", title: "Skills", iconName: "star.fill")
         #expect(sectionOne != sectionTwo)
     }

@@ -16,16 +16,18 @@ struct EducationView: View {
     // MARK: - Body
 
     var body: some View {
-        Group {
-            switch viewModel.viewState {
-            case .idle, .loading:
-                loadingContent
-            case .loaded:
-                loadedContent
-            case .empty:
-                emptyContent
-            case .error(let message):
-                errorContent(message: message)
+        ScrollView {
+            Group {
+                switch viewModel.viewState {
+                case .idle, .loading:
+                    loadingContent
+                case .loaded:
+                    loadedContent
+                case .empty:
+                    emptyContent
+                case .error(let message):
+                    errorContent(message: message)
+                }
             }
         }
         .task {
@@ -105,6 +107,19 @@ struct EducationView: View {
                 Text(entry.institutionName)
                     .font(ThemeFont.bodySmall)
                     .foregroundStyle(ThemeColor.secondaryText)
+            }
+
+            // University (affiliated university if different from institution)
+            if let university = entry.university {
+                HStack(spacing: ThemeSpacing.extraSmall) {
+                    Image(systemName: "graduationcap.fill")
+                        .font(ThemeFont.captionText)
+                        .foregroundStyle(ThemeColor.tertiaryText)
+                        .accessibilityHidden(true)
+                    Text(university)
+                        .font(ThemeFont.captionText)
+                        .foregroundStyle(ThemeColor.tertiaryText)
+                }
             }
 
             // Date range

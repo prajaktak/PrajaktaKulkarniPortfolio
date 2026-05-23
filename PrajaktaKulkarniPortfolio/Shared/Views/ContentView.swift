@@ -61,21 +61,14 @@ struct ContentView: View {
         print("🔥 Button tapped - starting population...")
 
         Task {
-            do {
-                print("✅ Task started")
-                let populator = FirestoreDataPopulator()
-                await populator.populateAllData()
+            print("✅ Task started")
+            let populator = FirestoreDataPopulator()
+            await populator.populateAllData()
 
-                await MainActor.run {
-                    isPopulating = false
-                    showCompletionAlert = true
-                    print("✅ Completed and showing alert")
-                }
-            } catch {
-                print("❌ Error in Task: \(error)")
-                await MainActor.run {
-                    isPopulating = false
-                }
+            await MainActor.run {
+                isPopulating = false
+                showCompletionAlert = true
+                print("✅ Completed and showing alert")
             }
         }
     }
