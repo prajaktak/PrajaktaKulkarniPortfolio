@@ -132,7 +132,7 @@ struct ResumeView: View {
         dateFormatter.dateFormat = "MMM yyyy"
         func formatDate(_ date: Date) -> String { dateFormatter.string(from: date) }
         func formatDateRange(start startDate: Date, end endDate: Date?) -> String {
-            "\(formatDate(startDate)) – \(endDate.map { formatDate($0) } ?? "Present")"
+            "\(formatDate(startDate)) – \(endDate.map { formatDate($0) } ?? String(localized: "Present"))"
         }
 
         let renderedPhoto: UIImage? = UIImage(named: "Prajakta photo").map { resizedPhoto($0, to: CGSize(width: 216, height: 216)) }
@@ -517,7 +517,9 @@ struct ResumeView: View {
         HStack(alignment: .top, spacing: 3) {
             Circle().fill(ThemeColor.resumePrimaryBlue).frame(width: 4, height: 4)
                 .padding(.top, size * 0.3)
-            Text(skill.skillName).font(.system(size: size)).foregroundStyle(Color.black.opacity(0.85)).lineLimit(2)
+            Text(skill.skillName).font(.system(size: size)).foregroundStyle(Color.black.opacity(0.85))
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -585,7 +587,7 @@ struct ResumeView: View {
         }
     }
 
-    private func sectionHeader(_ title: String, size: CGFloat) -> some View {
+    private func sectionHeader(_ title: LocalizedStringKey, size: CGFloat) -> some View {
         Text(title).font(.system(size: size, weight: .bold))
             .foregroundStyle(ThemeColor.resumePrimaryBlue).tracking(0.5)
     }

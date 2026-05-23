@@ -74,6 +74,6 @@ final class ResumeViewModel {
     }
 
     func dateRange(start: Date, end: Date?) -> String {
-        "\(dateString(from: start)) – \(end.map { dateString(from: $0) } ?? "Present")"
+        "\(dateString(from: start)) – \(end.map { dateString(from: $0) } ?? String(localized: "Present"))"
     }
 }

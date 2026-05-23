@@ -234,7 +234,7 @@ struct WorkExperienceView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM yyyy"
         let startText = formatter.string(from: experience.startDate)
-        let endText = experience.endDate.map { formatter.string(from: $0) } ?? "Present"
+        let endText = experience.endDate.map { formatter.string(from: $0) } ?? String(localized: "Present")
         return "\(startText) – \(endText)"
     }
 

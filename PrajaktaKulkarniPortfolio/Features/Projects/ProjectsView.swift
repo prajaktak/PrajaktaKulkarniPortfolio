@@ -271,7 +271,7 @@ struct ProjectsView: View {
         if let end = project.endDate {
             return "\(start) – \(formatter.string(from: end))"
         }
-        return "\(start) – Present"
+        return "\(start) – \(String(localized: "Present"))"
     }
 
     private func accessibilityLabel(for project: Project) -> String {

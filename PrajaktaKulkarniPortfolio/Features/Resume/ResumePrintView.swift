@@ -296,13 +296,15 @@ struct ResumePrintView: View {
         HStack(alignment: .top, spacing: 3) {
             Circle().fill(ThemeColor.resumePrimaryBlue).frame(width: 4, height: 4)
                 .padding(.top, bodySize * 0.3)
-            Text(skill.name).font(.system(size: bodySize)).foregroundStyle(Color.black.opacity(0.85)).lineLimit(2)
+            Text(skill.name).font(.system(size: bodySize)).foregroundStyle(Color.black.opacity(0.85))
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
     // MARK: Shared print helpers
 
-    private func printSectionHeader(_ title: String) -> some View {
+    private func printSectionHeader(_ title: LocalizedStringKey) -> some View {
         Text(title).font(.system(size: headerSize, weight: .bold)).foregroundStyle(ThemeColor.resumePrimaryBlue).tracking(0.5)
     }
 
